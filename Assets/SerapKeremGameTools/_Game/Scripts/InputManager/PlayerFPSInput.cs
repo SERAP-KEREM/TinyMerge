@@ -1,4 +1,4 @@
-using SerapKeremGameTools._Game._FPSPlayerSystem;
+
 using UnityEngine;
 
 namespace SerapKeremGameTools._Game._InputSystem
@@ -36,10 +36,10 @@ namespace SerapKeremGameTools._Game._InputSystem
             HandleMouseLook();
 
             // Interaction input handled here.
-            if (Input.GetKey(InteractKey))
-            {
-                FPSInteractionSystem.Instance.TryInteract();
-            }
+            //if (Input.GetKey(InteractKey))
+            //{
+            //    FPSInteractionSystem.Instance.TryInteract();
+            //}
         }
 
         /// <summary>
