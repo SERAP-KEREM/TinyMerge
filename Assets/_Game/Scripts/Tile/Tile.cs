@@ -1,61 +1,28 @@
+using _Game.Scripts.Items;
 using UnityEngine;
-using _Main.Items;
-using Zenject;
 
-namespace _Main.Tiles
+namespace _Game.Scripts.Tiles
 {
-   
-    public class Tile : MonoBehaviour, IPoolable<Vector3, IMemoryPool>
+    /// <summary>
+    /// Represents a tile in the game which can hold an item.
+    /// </summary>
+    public class Tile : MonoBehaviour
     {
+        [SerializeField]
+        private Item _item;
 
-        public class Factory : PlaceholderFactory<Vector3, Tile> { }
-        private IItem _currentItem;
-        private IMemoryPool _pool;
-        private bool _isOccupied;
-
-       
-        public bool IsOccupied => _isOccupied;
-        public IItem CurrentItem => _currentItem;
-        public Vector3 Position => transform.position;
-
-        public void OnSpawned(Vector3 position, IMemoryPool pool)
+        /// <summary>
+        /// Gets or sets the item associated with this tile.
+        /// </summary>
+        public Item Item
         {
-            _pool = pool;
-            transform.position = position;
-            _isOccupied = false;
-            _currentItem = null;
+            get { return _item; }
+            set { _item = value; }
         }
 
-        public void OnDespawned()
+        private void Awake()
         {
-            _pool = null;
-            _currentItem = null;
-            _isOccupied = false;
-        }
-
-        public bool TryPlaceItem(IItem item)
-        {
-            if (_isOccupied) return false;
-
-            _currentItem = item;
-            _isOccupied = true;
-            return true;
-        }
-
-        public IItem RemoveItem()
-        {
-            var item = _currentItem;
-            _currentItem = null;
-            _isOccupied = false;
-            return item;
-        }
-
-        public void Recycle()
-        {
-            if (_pool != null)
-            {
-                _pool.Despawn(this);
-            }
+            _item = null;
         }
     }
 }

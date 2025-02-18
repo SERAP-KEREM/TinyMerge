@@ -14,4 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InitialTime: 180
   CriticalTimeThreshold: 10
-  ItemDataList: []
+  ItemDataList:
+  - ItemPrefab: {fileID: 1759937125062127260, guid: a1a2c3d91a75d16499c3ef54e80b7468, type: 3}
+    ItemCount: 10
+    IsRequired: 0
+  - ItemPrefab: {fileID: 7998748620016110295, guid: 339f5873a9904c84e9ba0a9e347a8e76, type: 3}
+    ItemCount: 10
+    IsRequired: 0
+  - ItemPrefab: {fileID: 2029242721362159725, guid: bc0e22d589591a142b479c4a6bd46d4a, type: 3}
+    ItemCount: 10
+    IsRequired: 0

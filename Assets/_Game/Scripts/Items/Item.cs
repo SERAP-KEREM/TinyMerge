@@ -1,136 +1,222 @@
-using UnityEngine;
 using DG.Tweening;
-using _Main.Tiles;
-using Zenject;
+using UnityEngine;
+using SerapKeremGameTools.Game._Interfaces;
+using _Game.Scripts.Tiles;
 
-namespace _Main.Items
+namespace _Game.Scripts.Items
 {
-
-    public class Item : MonoBehaviour, IPoolable<Vector3, IMemoryPool>, IItem
-    {   
-        public class Factory : PlaceholderFactory<Vector3, Item> { }
+    /// <summary>
+    /// Represents an item in the game. This class encapsulates the item's properties and behaviors.
+    /// </summary>
+    public class Item : MonoBehaviour, ISelectable, ICollectable
+    {
         [Header("Item Properties")]
-        [SerializeField] private ItemData itemData;
+        [Tooltip("Unique identifier for the item.")]
+        [SerializeField, HideInInspector]
+        private int _itemId;
 
-        [Header("Movement Settings")]
-        [SerializeField] private float moveDuration = 0.5f;
-        [SerializeField] private Vector3 positionOffset = Vector3.up;
-        [SerializeField] private Ease moveEase = Ease.OutBack;
+        [Tooltip("Icon representing the item.")]
+        [SerializeField]
+        private Sprite _itemIcon;
 
-        [Header("Scale Settings")]
-        [SerializeField] private float normalScale = 1f;
-        [SerializeField] private float selectedScale = 1.25f;
-        [SerializeField] private float collectedScale = 0.5f;
-        [SerializeField] private float scaleAnimDuration = 0.2f;
+        [Header("Tile Parameters")]
+        [Tooltip("Tile associated with the item.")]
+        [SerializeField]
+        private Tile _itemTile;
 
+        [Header("Item Move Settings")]
+        [Tooltip("Duration for items to move to their new positions.")]
+        [SerializeField]
+        private float _itemMoveDuration = 0.5f;
+
+        [Tooltip("Position offset when the item moves.")]
+        [SerializeField]
+        private Vector3 _itemPositionOffset = Vector3.up;
+
+        [Header("Scale Parameters")]
+        [Tooltip("Rotation of the item when it is collected.")]
+        [SerializeField]
+        private Vector3 _itemCollectRotation = new Vector3(0f, 90f, 90f);
+
+        [Tooltip("Scale multiplier for the item when it is in its normal state.")]
+        [SerializeField]
+        private float _itemNormalScaleMultiplier = 1f;
+
+        [Tooltip("Scale multiplier for the item when it is selected.")]
+        [SerializeField]
+        private float _itemSelectedMultiplier = 1.25f;
+
+        [Tooltip("Scale multiplier for the item when it is collected.")]
+        [SerializeField]
+        private float _itemCollectedScaleMultiplier = 0.5f;
+
+        [Tooltip("Duration of the scale change animation.")]
+        [SerializeField]
+        private float _itemScaleChangeDuration = 0.2f;
+
+        [Header("Materials")]
+        [Tooltip("Material when the item is selected.")]
+        [SerializeField]
+        private Material _itemSelectedMaterial;
+        [Tooltip("Material when the item is not selected.")]
+        [SerializeField]
+        private Material _itemDefaultMaterial;
+
+        [Header("Effects")]
+        [Tooltip("Particle effect key for when the item is collected.")]
+        [SerializeField]
+        private string _itemCollectParticleKey = "ItemCollect";
+
+        [Tooltip("Audio clip key for when the item is collected.")]
+        [SerializeField]
+        private string _itemCollectClipKey = "ItemCollect";
+
+        [Header("References")]
+        [Tooltip("Renderer component")]
+        [SerializeField]
         private Renderer _renderer;
-        private IMemoryPool _pool;
-        private Sequence _currentSequence;
-        private bool _isCollectable = true;
-        private Tile _currentTile;
 
-        public int ItemId => itemData.itemId;
-        public bool IsCollectable => _isCollectable;
-        public Tile CurrentTile
+        private Rigidbody _rigidbody;
+        private bool _isCollectable = true;
+
+        /// <summary>
+        /// Gets or sets the unique identifier for the item.
+        /// </summary>
+        public int ItemId
         {
-            get => _currentTile;
+            get => _itemId;
+            set => _itemId = value;
+        }
+
+        /// <summary>
+        /// Gets or sets the icon representing the item.
+        /// </summary>
+        public Sprite ItemIcon
+        {
+            get => _itemIcon;
+            set => _itemIcon = value;
+        }
+
+
+        /// <summary>
+        /// Gets or sets the tile associated with the item.
+        /// </summary>
+        public Tile ItemTile
+        {
+            get => _itemTile;
             set
             {
-                _currentTile = value;
-                if (_currentTile != null)
-                {
-                    MoveToPosition(_currentTile.transform.position + positionOffset);
-                }
+                _itemTile = value;
+                UpdateItemPosition();
+               // PlayCollectionEffects();
             }
         }
+
+        /// <summary>
+        /// Gets a value indicating whether the item is collectable.
+        /// </summary>
+        public bool IsCollectable => _isCollectable;
 
         private void Awake()
         {
-            _renderer = GetComponent<Renderer>();
-            ResetState();
+            _rigidbody = GetComponentInChildren<Rigidbody>();
+            _renderer = GetComponentInChildren<Renderer>();
+
+            _itemDefaultMaterial = _renderer.material;
+
+            ResetItemScale();
         }
 
-        public void OnSpawned(Vector3 position, IMemoryPool pool)
-        {
-            _pool = pool;
-            transform.position = position;
-            _isCollectable = true;
-            ResetState();
-        }
-
-        public void OnDespawned()
-        {
-            _currentSequence?.Kill();
-            _currentTile = null;
-            _pool = null;
-        }
-
+        /// <summary>
+        /// Handles the selection of the item and applies a scale animation.
+        /// </summary>
         public void Select()
         {
-            AnimateScale(selectedScale);
-            _renderer.material = itemData.selectedMaterial;
+            ChangeRendererMaterial(_itemSelectedMaterial);
+            ApplyScaleAnimation(_itemSelectedMultiplier);
         }
 
-        public void Deselect()
+        /// <summary>
+        /// Handles the deselection of the item and reverts the scale.
+        /// </summary>
+        public void DeSelect()
         {
-            AnimateScale(normalScale);
-            _renderer.material = itemData.defaultMaterial;
+            ChangeRendererMaterial(_itemDefaultMaterial);
+            ApplyScaleAnimation(_itemNormalScaleMultiplier);
         }
 
+        private void ChangeRendererMaterial(Material material)
+        {
+            _renderer.material = material;
+        }
+
+        /// <summary>
+        /// Handles the collection of the item.
+        /// </summary>
         public void Collect()
         {
             _isCollectable = false;
-            _currentSequence = DOTween.Sequence()
-                .Append(transform.DOScale(Vector3.one * collectedScale, scaleAnimDuration))
-                .Join(transform.DORotate(Vector3.right * 90f, scaleAnimDuration))
-                .SetEase(Ease.InBack);
+            ApplyScaleAnimation(_itemCollectedScaleMultiplier, () =>
+            {
+                _rigidbody.isKinematic = true;
+                ChangeRendererMaterial(_itemDefaultMaterial);
+            });
         }
 
+        /// <summary>
+        /// Recycles the item, resetting its collectable state and scale.
+        /// </summary>
         public void Recycle()
         {
-            if (_pool != null)
+            _isCollectable = true;
+            ApplyScaleAnimation(_itemNormalScaleMultiplier, () =>
             {
-                _pool.Despawn(this);
-            }
+                _rigidbody.isKinematic = false;
+                ChangeRendererMaterial(_itemDefaultMaterial);
+            });
         }
 
-        private void MoveToPosition(Vector3 targetPosition)
+        /// <summary>
+        /// Resets the scale of the item to its normal state.
+        /// </summary>
+        private void ResetItemScale()
         {
-            transform.DOMove(targetPosition, moveDuration)
-                    .SetEase(moveEase);
+            transform.localScale = Vector3.one * _itemNormalScaleMultiplier;
         }
 
-        private void AnimateScale(float targetScale)
+        /// <summary>
+        /// Updates the item's position and rotation based on the associated tile.
+        /// </summary>
+        private void UpdateItemPosition()
         {
-            transform.DOScale(Vector3.one * targetScale, scaleAnimDuration)
-                    .SetEase(Ease.OutBack);
+            Vector3 itemPosition = _itemTile ? _itemTile.transform.position + _itemPositionOffset :
+                Vector3.zero;
+            Vector3 itemRotation = _itemCollectRotation;
+
+            transform.DOMove(itemPosition, _itemMoveDuration);
+            transform.DORotate(itemRotation, _itemMoveDuration);
         }
 
-        private void ResetState()
+        /// <summary>
+        /// Plays particle and sound effects when the item is collected.
+        /// </summary>
+        //private void PlayCollectionEffects()
+        //{
+        //    if (IsCollectable)
+        //    {
+        //        GlobalBinder.singleton.ParticleManager.PlayParticleAtPoint(_itemCollectParticleKey, transform.position);
+        //        GlobalBinder.singleton.AudioManager.PlaySound(_itemCollectClipKey);
+        //    }
+        //}
+
+        /// <summary>
+        /// Applies a scale animation to the item.
+        /// </summary>
+        /// <param name="scaleMultiplier">The target scale multiplier.</param>
+        /// <param name="onComplete">Optional callback to be invoked when the animation is complete.</param>
+        private void ApplyScaleAnimation(float scaleMultiplier, TweenCallback onComplete = null)
         {
-            transform.localScale = Vector3.one * normalScale;
-            transform.rotation = Quaternion.identity;
-            _renderer.material = itemData.defaultMaterial;
+            transform.DOScale(Vector3.one * scaleMultiplier, _itemScaleChangeDuration).OnComplete(onComplete);
         }
-    }
-
-    [System.Serializable]
-    public class ItemData
-    {
-        public int itemId;
-        public Sprite icon;
-        public Material defaultMaterial;
-        public Material selectedMaterial;
-        [TextArea] public string description;
-    }
-
-    public interface IItem
-    {
-        int ItemId { get; }
-        bool IsCollectable { get; }
-        void Select();
-        void Deselect();
-        void Collect();
-        void Recycle();
     }
 }

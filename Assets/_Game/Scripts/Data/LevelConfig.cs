@@ -1,8 +1,8 @@
-using _Main.Items;
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.Generic;
+using _Game.Scripts.Items;
 
-namespace _Main.Data
+namespace _Game.Scripts.Data
 {
     [CreateAssetMenu(fileName = "LevelConfig", menuName = "Data/LevelConfig")]
     public class LevelConfig : ScriptableObject
@@ -23,6 +23,7 @@ namespace _Main.Data
         [System.Serializable]
         public class ItemData
         {
+            [Header("Item Prefab Settings")]
             [Tooltip("The item prefab.")]
             public Item ItemPrefab;
 

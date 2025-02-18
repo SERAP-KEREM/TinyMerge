@@ -1,114 +1,156 @@
+using Zenject;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using DG.Tweening;
-using Zenject;
-using System.Linq;
-using _Main.Tiles;
-using _Main.Items;
-using _Main.Signals;
-using _Main.Settings;
+using _Game.Scripts.Tiles;
+using _Game.Scripts.Items;
 
-namespace _Main.Management
+namespace _Game.Scripts.Management
 {
-    public class TileManager : IInitializable
+    /// <summary>
+    /// Manages the tiles in the game, including tracking active tiles and organizing items within them.
+    /// </summary>
+    public class TileManager : MonoBehaviour
     {
-        private const float MATCH_ANIMATION_DURATION = 0.5f;
-        private const float MATCH_RISE_HEIGHT = 2f;
+        [Header("Tile Manager Parameters")]
+        [Tooltip("The list of all tiles managed by this manager.")]
+        private List<Tile> _activeTileList;
 
-        private readonly List<Tile> _tiles = new List<Tile>();
-        private readonly Tile.Factory _tileFactory;
-        private readonly SignalBus _signalBus;
-        private readonly TileManagerSettings _settings;
+        [Header("Item Move Settings")]
+        [Tooltip("Duration for the matching item animation.")]
+        [SerializeField]
+        private float _matchMoveAnimationDuration = 0.5f;
+        [SerializeField]
+        private float _matchScaleAnimationDuration = 0.25f;
 
+        [Header("Effects")]
+        [Header("Particle Effects")]
+        [SerializeField, Tooltip("")]
+        private string _itemMatchParticleKey = "ItemMatch";
+        [Header("Audio Effects")]
+        [SerializeField, Tooltip("")]
+        private string _itemMatchClipKey = "ItemMatch";
 
-        public TileManager(
-           TileManagerSettings settings,
-           Tile.Factory tileFactory)
+        [Inject]
+        public void Construct(List<Tile> activeTileList)
         {
-            _settings = settings;
-            _tileFactory = tileFactory;
+            _activeTileList = activeTileList;
         }
 
-        public void Initialize()
+        /// <summary>
+        /// Aligns tiles by collecting all items, sorting them by type, and reassigning them to the tiles.
+        /// If three or more matching items are aligned, they are animated and deactivated.
+        /// </summary>
+        public void AlignMatchingItems()
         {
-            CreateTileGrid();
-        }
+            bool itemsChanged;
 
-        private void CreateTileGrid()
-        {
-            for (int x = 0; x < _settings.gridSize.x; x++)
+            do
             {
-                for (int z = 0; z < _settings.gridSize.y; z++)
-                {
-                    Vector3 position = new Vector3(
-                        x * _settings.tileSpacing.x,
-                        _settings.tileHeight,
-                        z * _settings.tileSpacing.y
-                    );
+                itemsChanged = false;
 
-                    var tile = _tileFactory.Create(position);
-                    _tiles.Add(tile);
+                // Collect all items from the tiles
+                List<Item> items = _activeTileList.Where(tile => tile.Item != null)
+                                                  .Select(tile => tile.Item)
+                                                  .ToList();
+
+                // Sort items by their type (e.g., ItemId)
+                items = items.OrderBy(item => item.ItemId).ToList();
+
+                // Clear all tiles
+                foreach (var tile in _activeTileList)
+                {
+                    tile.Item = null;
+                }
+
+                // Reassign sorted items back to tiles
+                for (int i = 0; i < items.Count; i++)
+                {
+                    _activeTileList[i].Item = items[i];
+
+                    // Animate the item moving to its new position
+                    items[i].ItemTile = _activeTileList[i];
+                }
+
+                // Check for matching items in a row
+                for (int i = 0; i < _activeTileList.Count - 2; i++)
+                {
+                    var tile1 = _activeTileList[i];
+                    var tile2 = _activeTileList[i + 1];
+                    var tile3 = _activeTileList[i + 2];
+
+                    if (tile1.Item != null && tile2.Item != null && tile3.Item != null &&
+                        tile1.Item.ItemId == tile2.Item.ItemId && tile1.Item.ItemId == tile3.Item.ItemId)
+                    {
+                        // Animate and deactivate the matching items
+                        AnimateAndDeactivateItems(tile1.Item, tile2.Item, tile3.Item, tile1, tile2, tile3);
+
+                        // Set the items in the tiles to null
+                        tile1.Item = null;
+                        tile2.Item = null;
+                        tile3.Item = null;
+
+                        itemsChanged = true;
+                    }
                 }
             }
+            while (itemsChanged);
         }
 
-        public void HandleMatch(List<Item> matchedItems)
+        /// <summary>
+        /// Animates and deactivates the specified items with a custom effect.
+        /// </summary>
+        private void AnimateAndDeactivateItems(Item item1, Item item2, Item item3,
+            Tile tile1, Tile tile2, Tile tile3)
         {
-            if (!matchedItems.Any()) return;
+            Sequence sequence = DOTween.Sequence();
 
-            var tiles = matchedItems.Select(item => item.CurrentTile).ToList();
-            AnimateAndDeactivateItems(matchedItems, tiles);
-        }
+            sequence.Append(item1.transform.DOMoveY(tile1.transform.position.y + 2,
+                _matchMoveAnimationDuration).SetEase(Ease.OutQuad));
+            sequence.Join(item2.transform.DOMoveY(tile2.transform.position.y + 2,
+                _matchMoveAnimationDuration).SetEase(Ease.OutQuad));
+            sequence.Join(item3.transform.DOMoveY(tile3.transform.position.y + 2,
+                _matchMoveAnimationDuration).SetEase(Ease.OutQuad));
 
-        private void AnimateAndDeactivateItems(List<Item> items, List<Tile> tiles)
-        {
-            var sequence = DOTween.Sequence();
-            var centerPos = CalculateCenterPosition(items);
+            sequence.Append(item1.transform.DOMoveZ(tile1.transform.position.z + 2,
+                _matchMoveAnimationDuration).SetEase(Ease.OutQuad));
+            sequence.Join(item2.transform.DOMoveZ(tile2.transform.position.z + 2,
+                _matchMoveAnimationDuration).SetEase(Ease.OutQuad));
+            sequence.Join(item3.transform.DOMoveZ(tile3.transform.position.z + 2,
+                _matchMoveAnimationDuration).SetEase(Ease.OutQuad));
 
-            foreach (var item in items)
-            {
-                sequence.Join(CreateItemMatchAnimation(item, centerPos));
-            }
+            sequence.Append(item1.transform.DOMoveX(item2.transform.position.x, _matchMoveAnimationDuration / 2).
+                SetEase(Ease.InBack));
+            sequence.Join(item3.transform.DOMoveX(item2.transform.position.x, _matchMoveAnimationDuration / 2).
+                SetEase(Ease.InBack));
+
+            sequence.Append(item1.transform.DOScale(Vector3.zero, _matchScaleAnimationDuration).
+                SetEase(Ease.InOutBounce));
+            sequence.Join(item2.transform.DOScale(Vector3.zero, _matchScaleAnimationDuration).
+                SetEase(Ease.InOutBounce));
+            sequence.Join(item3.transform.DOScale(Vector3.zero, _matchScaleAnimationDuration).
+                SetEase(Ease.InOutBounce));
 
             sequence.OnComplete(() =>
             {
-                _signalBus.Fire(new ItemsMatchedSignal(items));
-                DeactivateItems(items, tiles);
+                item1.gameObject.SetActive(false);
+                item2.gameObject.SetActive(false);
+                item3.gameObject.SetActive(false);
+                AlignMatchingItems();
             });
+
+            sequence.Play();
         }
 
-        private Sequence CreateItemMatchAnimation(Item item, Vector3 centerPos)
+        public void ClearTile(Tile tile)
         {
-            return DOTween.Sequence()
-                .Append(item.transform.DOMoveY(item.transform.position.y + MATCH_RISE_HEIGHT, MATCH_ANIMATION_DURATION)
-                    .SetEase(Ease.OutQuad))
-                .Join(item.transform.DOMove(centerPos, MATCH_ANIMATION_DURATION)
-                    .SetEase(Ease.InBack))
-                .Join(item.transform.DOScale(Vector3.zero, MATCH_ANIMATION_DURATION * 0.5f)
-                    .SetEase(Ease.InOutBounce));
+            tile.Item = null;
         }
 
-        private Vector3 CalculateCenterPosition(List<Item> items)
+        public Tile FindEmptyTile()
         {
-            return items.Aggregate(Vector3.zero, (current, item) => current + item.transform.position) / items.Count;
-        }
-
-        private void DeactivateItems(List<Item> items, List<Tile> tiles)
-        {
-            for (int i = 0; i < items.Count; i++)
-            {
-                items[i].Recycle();
-                tiles[i].RemoveItem();
-            }
-        }
-
-        public Tile FindEmptyTile() => _tiles.FirstOrDefault(t => !t.IsOccupied);
-
-        [System.Serializable]
-        public class Settings
-        {
-            public Vector2Int gridSize = new Vector2Int(4, 4);
-            public Vector2 tileSpacing = new Vector2(2f, 2f);
+            return _activeTileList.FirstOrDefault(tile => tile != null && tile.Item == null);
         }
     }
 }
