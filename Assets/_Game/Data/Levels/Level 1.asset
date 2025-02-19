@@ -15,7 +15,7 @@ MonoBehaviour:
   InitialTime: 180
   CriticalTimeThreshold: 10
   ItemDataList:
-  - ItemPrefab: {fileID: 1759937125062127260, guid: a1a2c3d91a75d16499c3ef54e80b7468, type: 3}
+  - ItemPrefab: {fileID: 2035356342216861534, guid: 7950955a003400c41a8534d9461dbd39, type: 3}
     ItemCount: 10
     IsRequired: 0
   - ItemPrefab: {fileID: 7998748620016110295, guid: 339f5873a9904c84e9ba0a9e347a8e76, type: 3}

@@ -30,8 +30,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.97643, y: 0.97643, z: 0.97643}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 9099320734183254144}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -129,7 +129,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
@@ -145,6 +145,7 @@ GameObject:
   - component: {fileID: 9099320734183254144}
   - component: {fileID: 4685387733874871762}
   - component: {fileID: 2029242721362159725}
+  - component: {fileID: 4801228651314001197}
   m_Layer: 0
   m_Name: bowl
   m_TagString: Untagged
@@ -162,7 +163,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 3.46, y: 0, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4393906671452887268}
@@ -202,4 +203,25 @@ MonoBehaviour:
   _itemDefaultMaterial: {fileID: 2100000, guid: 07ada43b026b31942913b96ffee570e1, type: 2}
   _itemCollectParticleKey: ItemCollect
   _itemCollectClipKey: ItemCollect
-  _renderer: {fileID: 0}
+  _renderer: {fileID: 2145401420961626205}
+--- !u!65 &4801228651314001197
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5038336557184093032}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.2615633, y: 1.5475398, z: 1.2790008}
+  m_Center: {x: -0.0043592453, y: 0.75766224, z: -0.00000011920929}

@@ -1,11 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
 using _Game.Scripts.Items;
+using Zenject;
 
 namespace _Game.Scripts.Data
 {
     [CreateAssetMenu(fileName = "LevelConfig", menuName = "Data/LevelConfig")]
-    public class LevelConfig : ScriptableObject
+    public class LevelConfig : ScriptableObjectInstaller<LevelConfig>
     {
         [Header("Timer Settings")]
         [Tooltip("Initial time for the level in seconds.")]

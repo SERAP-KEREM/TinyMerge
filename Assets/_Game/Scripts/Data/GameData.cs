@@ -1,12 +1,15 @@
+using _Game.Scripts._helpers;
+using _Game.Scripts.Management;
 using DG.Tweening.Core.Easing;
 using SerapKeremGameTools._Game._SaveLoadSystem;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 namespace _Game.Scripts.Data
 {
     [CreateAssetMenu(fileName = "GameData", menuName = "Data/GameData")]
-    public class GameData : ScriptableObject
+    public class GameData : ScriptableObjectInstaller<GameData>
     {
         [Header("Game Configuration")]
         [Tooltip("List of levels in the game.")]
@@ -43,5 +46,18 @@ namespace _Game.Scripts.Data
         /// Gets the configuration of the current level based on the index.
         /// </summary>
         public LevelConfig CurrentLevel => _levelList[CurrentLevelIndex];
+
+        public override void InstallBindings()
+        {
+            // GameData'y? kendisinden ba?lama
+            Container.Bind<GameData>()
+                .FromInstance(this)
+                .AsSingle();
+
+            // Mevcut LevelConfig'i ba?lama
+            Container.Bind<LevelConfig>()
+                .FromInstance(CurrentLevel)
+                .AsSingle();
+        }
     }
 }

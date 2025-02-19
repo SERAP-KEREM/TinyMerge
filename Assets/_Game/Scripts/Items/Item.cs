@@ -2,6 +2,8 @@ using DG.Tweening;
 using UnityEngine;
 using SerapKeremGameTools.Game._Interfaces;
 using _Game.Scripts.Tiles;
+using _Game.Scripts._helpers;
+using Zenject;
 
 namespace _Game.Scripts.Items
 {
@@ -79,6 +81,7 @@ namespace _Game.Scripts.Items
         private Rigidbody _rigidbody;
         private bool _isCollectable = true;
 
+        private ParticleManager _particleManager;
         /// <summary>
         /// Gets or sets the unique identifier for the item.
         /// </summary>
@@ -96,7 +99,11 @@ namespace _Game.Scripts.Items
             get => _itemIcon;
             set => _itemIcon = value;
         }
-
+        [Inject]
+        public void Construct(ParticleManager particleManager)
+        {
+            _particleManager = particleManager;
+        }
 
         /// <summary>
         /// Gets or sets the tile associated with the item.
@@ -108,7 +115,7 @@ namespace _Game.Scripts.Items
             {
                 _itemTile = value;
                 UpdateItemPosition();
-               // PlayCollectionEffects();
+                PlayCollectionEffects();
             }
         }
 
@@ -200,14 +207,14 @@ namespace _Game.Scripts.Items
         /// <summary>
         /// Plays particle and sound effects when the item is collected.
         /// </summary>
-        //private void PlayCollectionEffects()
-        //{
-        //    if (IsCollectable)
-        //    {
-        //        GlobalBinder.singleton.ParticleManager.PlayParticleAtPoint(_itemCollectParticleKey, transform.position);
-        //        GlobalBinder.singleton.AudioManager.PlaySound(_itemCollectClipKey);
-        //    }
-        //}
+        private void PlayCollectionEffects()
+        {
+            if (IsCollectable)
+            {
+               _particleManager.PlayParticleAtPoint(_itemCollectParticleKey, transform.position);
+              //  GlobalBinder.singleton.AudioManager.PlaySound(_itemCollectClipKey);
+            }
+        }
 
         /// <summary>
         /// Applies a scale animation to the item.

@@ -74,14 +74,17 @@ namespace _Game.Scripts.Management
         private LevelManager _levelManager;
         private ParticleManager _particleManager;
 
-       
+
+
 
         [Inject]
-        public void Construct(TileManager tileManager,LevelManager levelManager, ParticleManager particleManager)
+        public void Construct(TileManager tileManager, LevelManager levelManager,
+            ParticleManager particleManager, GameData gameData) // GameData ekle
         {
             _tileManager = tileManager;
             _levelManager = levelManager;
             _particleManager = particleManager;
+            _gameData = gameData; // GameData'y? inject et
         }
 
 
