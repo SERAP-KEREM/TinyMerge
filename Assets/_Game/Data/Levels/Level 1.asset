@@ -15,12 +15,12 @@ MonoBehaviour:
   InitialTime: 180
   CriticalTimeThreshold: 10
   ItemDataList:
-  - ItemPrefab: {fileID: 2035356342216861534, guid: 7950955a003400c41a8534d9461dbd39, type: 3}
-    ItemCount: 10
-    IsRequired: 0
-  - ItemPrefab: {fileID: 7998748620016110295, guid: 339f5873a9904c84e9ba0a9e347a8e76, type: 3}
-    ItemCount: 10
-    IsRequired: 0
-  - ItemPrefab: {fileID: 2029242721362159725, guid: bc0e22d589591a142b479c4a6bd46d4a, type: 3}
-    ItemCount: 10
-    IsRequired: 0
+  - ItemPrefab: {fileID: 413044834557349426, guid: 7c5216158386e5746aaa3ffae19c2830, type: 3}
+    ItemCount: 5
+    IsRequired: 1
+  - ItemPrefab: {fileID: 6907655278803269786, guid: 9cf934f4d1bef324383a83ea96296c64, type: 3}
+    ItemCount: 5
+    IsRequired: 1
+  - ItemPrefab: {fileID: 4142406170501248743, guid: 339f5873a9904c84e9ba0a9e347a8e76, type: 3}
+    ItemCount: 5
+    IsRequired: 1

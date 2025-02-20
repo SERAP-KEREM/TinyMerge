@@ -13,6 +13,7 @@ namespace SerapKeremGameTools._Game._SaveLoadSystem
         /// <typeparam name="T">The data type to save (string, int, float, bool)</typeparam>
         /// <param name="key">The key for the saved data</param>
         /// <param name="value">The value to save</param>
+
         public static void SaveData<T>(string key, T value)
         {
             if (value == null)
@@ -75,8 +76,6 @@ namespace SerapKeremGameTools._Game._SaveLoadSystem
         {
             PlayerPrefs.SetFloat(key, value);
         }
-
-
 
         /// <summary>
         /// Clears saved data by a given key.

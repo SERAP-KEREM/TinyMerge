@@ -5,43 +5,36 @@ using UnityEngine;
 using DG.Tweening;
 using _Game.Scripts.Tiles;
 using _Game.Scripts.Items;
+using _Game.Scripts._helpers;
 
 namespace _Game.Scripts.Management
 {
-    /// <summary>
-    /// Manages the tiles in the game, including tracking active tiles and organizing items within them.
-    /// </summary>
     public class TileManager : MonoBehaviour
     {
-        [Header("Tile Manager Parameters")]
-        [Tooltip("The list of all tiles managed by this manager.")]
-        private List<Tile> _activeTileList;
+        [Header("Tile Settings")]
+        [SerializeField] private List<Tile> _activeTileList;
 
-        [Header("Item Move Settings")]
-        [Tooltip("Duration for the matching item animation.")]
-        [SerializeField]
-        private float _matchMoveAnimationDuration = 0.5f;
-        [SerializeField]
-        private float _matchScaleAnimationDuration = 0.25f;
+        [Header("Match Animation Settings")]
+        [SerializeField] private float _matchMoveAnimationDuration = 0.5f;
+        [SerializeField] private float _matchScaleAnimationDuration = 0.25f;
+        //[SerializeField] private float _moveUpDistance = 2f;
+        //[SerializeField] private float _moveForwardDistance = 2f;
 
         [Header("Effects")]
-        [Header("Particle Effects")]
-        [SerializeField, Tooltip("")]
-        private string _itemMatchParticleKey = "ItemMatch";
+        [SerializeField] private string _itemMatchParticleKey = "ItemMatch";
         [Header("Audio Effects")]
         [SerializeField, Tooltip("")]
         private string _itemMatchClipKey = "ItemMatch";
 
+        private ParticleManager _particleManager;
+        private bool _isProcessingMatch;
+
         [Inject]
-        public void Construct(List<Tile> activeTileList)
+        public void Construct(ParticleManager particleManager)
         {
-            _activeTileList = activeTileList;
+            _particleManager = particleManager;
         }
 
-        /// <summary>
-        /// Aligns tiles by collecting all items, sorting them by type, and reassigning them to the tiles.
-        /// If three or more matching items are aligned, they are animated and deactivated.
-        /// </summary>
         public void AlignMatchingItems()
         {
             bool itemsChanged;
@@ -97,13 +90,18 @@ namespace _Game.Scripts.Management
             }
             while (itemsChanged);
         }
-
         /// <summary>
         /// Animates and deactivates the specified items with a custom effect.
         /// </summary>
+        /// <param name="item1">The first item to animate and deactivate.</param>
+        /// <param name="item2">The second item to animate and deactivate.</param>
+        /// <param name="item3">The third item to animate and deactivate.</param>
+        /// <param name="position2">The target position for the second item.</param>
+        /// <param name="position3">The target position for the third item.</param>
         private void AnimateAndDeactivateItems(Item item1, Item item2, Item item3,
             Tile tile1, Tile tile2, Tile tile3)
         {
+            // Raise the items slightly
             Sequence sequence = DOTween.Sequence();
 
             sequence.Append(item1.transform.DOMoveY(tile1.transform.position.y + 2,
@@ -113,6 +111,7 @@ namespace _Game.Scripts.Management
             sequence.Join(item3.transform.DOMoveY(tile3.transform.position.y + 2,
                 _matchMoveAnimationDuration).SetEase(Ease.OutQuad));
 
+            // Move items towards the forward
             sequence.Append(item1.transform.DOMoveZ(tile1.transform.position.z + 2,
                 _matchMoveAnimationDuration).SetEase(Ease.OutQuad));
             sequence.Join(item2.transform.DOMoveZ(tile2.transform.position.z + 2,
@@ -120,6 +119,7 @@ namespace _Game.Scripts.Management
             sequence.Join(item3.transform.DOMoveZ(tile3.transform.position.z + 2,
                 _matchMoveAnimationDuration).SetEase(Ease.OutQuad));
 
+            // Move items towards the center and apply a scale down effect
             sequence.Append(item1.transform.DOMoveX(item2.transform.position.x, _matchMoveAnimationDuration / 2).
                 SetEase(Ease.InBack));
             sequence.Join(item3.transform.DOMoveX(item2.transform.position.x, _matchMoveAnimationDuration / 2).
@@ -132,25 +132,37 @@ namespace _Game.Scripts.Management
             sequence.Join(item3.transform.DOScale(Vector3.zero, _matchScaleAnimationDuration).
                 SetEase(Ease.InOutBounce));
 
+            sequence.AppendCallback(() =>
+            {
+                _particleManager.PlayParticleAtPoint(_itemMatchParticleKey,
+                    item2.transform.position);
+
+               // GlobalBinder.singleton.AudioManager.PlaySound(_itemMatchClipKey);
+            });
+
+            // Deactivate items after the animation completes
             sequence.OnComplete(() =>
             {
                 item1.gameObject.SetActive(false);
                 item2.gameObject.SetActive(false);
                 item3.gameObject.SetActive(false);
-                AlignMatchingItems();
+                AlignMatchingItems(); // Re-sort after deactivating items
             });
 
             sequence.Play();
         }
 
-        public void ClearTile(Tile tile)
-        {
-            tile.Item = null;
-        }
-
         public Tile FindEmptyTile()
         {
             return _activeTileList.FirstOrDefault(tile => tile != null && tile.Item == null);
+        }
+
+        public void ClearTile(Tile tile)
+        {
+            if (tile != null)
+            {
+                tile.Item = null;
+            }
         }
     }
 }

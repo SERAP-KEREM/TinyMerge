@@ -14,7 +14,7 @@ namespace _Game.Scripts.Items
     {
         [Header("Item Properties")]
         [Tooltip("Unique identifier for the item.")]
-        [SerializeField, HideInInspector]
+        [SerializeField]
         private int _itemId;
 
         [Tooltip("Icon representing the item.")]
@@ -81,6 +81,7 @@ namespace _Game.Scripts.Items
         private Rigidbody _rigidbody;
         private bool _isCollectable = true;
 
+
         private ParticleManager _particleManager;
         /// <summary>
         /// Gets or sets the unique identifier for the item.
@@ -128,7 +129,7 @@ namespace _Game.Scripts.Items
         {
             _rigidbody = GetComponentInChildren<Rigidbody>();
             _renderer = GetComponentInChildren<Renderer>();
-
+          
             _itemDefaultMaterial = _renderer.material;
 
             ResetItemScale();
@@ -209,7 +210,7 @@ namespace _Game.Scripts.Items
         /// </summary>
         private void PlayCollectionEffects()
         {
-            if (IsCollectable)
+            if (IsCollectable && _particleManager != null)
             {
                _particleManager.PlayParticleAtPoint(_itemCollectParticleKey, transform.position);
               //  GlobalBinder.singleton.AudioManager.PlaySound(_itemCollectClipKey);

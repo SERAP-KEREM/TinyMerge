@@ -1,7 +1,6 @@
 using _Game.Scripts._helpers;
 using _Game.Scripts.Management;
 using DG.Tweening.Core.Easing;
-using SerapKeremGameTools._Game._SaveLoadSystem;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
@@ -31,14 +30,14 @@ namespace _Game.Scripts.Data
             get
             {
                 // Load the level index from SaveManager
-                //_currentLevelIndex = SaveManager.LoadLevelIndex();
+                _currentLevelIndex = SaveManager.LoadLevelIndex();
                 return _currentLevelIndex % _levelList.Count;
             }
             set
             {
                 // Set the value and save it via SaveManager
                 _currentLevelIndex = value;
-                //SaveManager.SaveLevelIndex(_currentLevelIndex);
+                SaveManager.SaveLevelIndex(_currentLevelIndex);
             }
         }
 

@@ -59,6 +59,7 @@ namespace _Game.Scripts.Management
         private void Start()
         {
             CreateItemIndicators();
+           // TimeManager.OnTimeFinished += LevelFail;
         }
 
         /// <summary>
@@ -100,6 +101,7 @@ namespace _Game.Scripts.Management
         public void LevelFail()
         {
             OnLevelFailed?.Invoke();
+            //GlobalBinder.singleton.AudioManager.PlaySound(_levelFailClipKey);
             Debug.Log("Level Failed!");
         }
 

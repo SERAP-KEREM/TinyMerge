@@ -34,5 +34,6 @@ namespace _Game.Scripts.Data
             [Tooltip("Whether this item is required.")]
             public bool IsRequired;
         }
+
     }
 }

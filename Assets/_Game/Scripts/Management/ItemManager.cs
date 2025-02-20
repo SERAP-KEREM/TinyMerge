@@ -10,6 +10,7 @@ using UnityEngine.Playables;
 using SerapKeremGameTools.Game._Interfaces;
 using Zenject;
 using _Game.Scripts._helpers;
+using System.ComponentModel;
 
 namespace _Game.Scripts.Management
 {
@@ -73,18 +74,19 @@ namespace _Game.Scripts.Management
         private TileManager _tileManager;
         private LevelManager _levelManager;
         private ParticleManager _particleManager;
-
+        private DiContainer _container;
 
 
 
         [Inject]
         public void Construct(TileManager tileManager, LevelManager levelManager,
-            ParticleManager particleManager, GameData gameData) // GameData ekle
+            ParticleManager particleManager, GameData gameData, DiContainer container) // GameData ekle
         {
             _tileManager = tileManager;
             _levelManager = levelManager;
             _particleManager = particleManager;
             _gameData = gameData; // GameData'y? inject et
+            _container = container;
         }
 
 
@@ -162,6 +164,7 @@ namespace _Game.Scripts.Management
             );
 
             Item newItem = Instantiate(itemData.ItemPrefab, spawnPosition, randomRotation, transform);
+           _container.Inject(newItem);
             newItem.name = $"{itemData.ItemPrefab.GetType().Name}_{itemNumber}";
 
             _generatedItems.Add(newItem);

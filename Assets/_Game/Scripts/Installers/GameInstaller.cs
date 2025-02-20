@@ -3,6 +3,7 @@ using Zenject;
 using _Game.Scripts.Management;
 using _Game.Scripts._helpers;
 using _Game.Scripts.Data;
+using _Game.Scripts.Items;
 
 public class GameInstaller : MonoInstaller
 {
@@ -11,8 +12,11 @@ public class GameInstaller : MonoInstaller
     [SerializeField] private LevelManager _levelManager;
     [SerializeField] private ParticleManager _particleManager;
     [SerializeField] private TileManager _tileManager;
+
     [Header("Scriptable Objects")]
     [SerializeField] private PlayerInput _playerInput;
+    [SerializeField] private GameData _gameDataAsset;
+
     public override void InstallBindings()
     {
         InstallManagers();
@@ -21,7 +25,6 @@ public class GameInstaller : MonoInstaller
 
     private void InstallManagers()
     {
-        // Core Managers
         Container.Bind<ItemManager>()
             .FromInstance(_itemManager)
             .AsSingle();
@@ -44,5 +47,11 @@ public class GameInstaller : MonoInstaller
         Container.Bind<PlayerInput>()
             .FromScriptableObject(_playerInput)
             .AsSingle();
+
+        Container.Bind<GameData>()
+            .FromScriptableObject(_gameDataAsset)
+            .AsSingle();
+        
+     
     }
 }
