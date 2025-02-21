@@ -24,3 +24,6 @@ MonoBehaviour:
   - ItemPrefab: {fileID: 4142406170501248743, guid: 339f5873a9904c84e9ba0a9e347a8e76, type: 3}
     ItemCount: 5
     IsRequired: 1
+  - ItemPrefab: {fileID: 4222654893531154424, guid: e458eef31ff57b749a77d42fdefbae65, type: 3}
+    ItemCount: 5
+    IsRequired: 1

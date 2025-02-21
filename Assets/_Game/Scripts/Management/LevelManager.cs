@@ -5,7 +5,8 @@ using UnityEngine.Events;
 using _Game.Scripts.Items;
 using _Game.Scripts.Data;
 using _Game.Scripts._helpers;
-using Zenject; // For DOTween functionality
+using Zenject;
+using _Game.Scripts.Services; // For DOTween functionality
 
 namespace _Game.Scripts.Management
 {
@@ -48,20 +49,22 @@ namespace _Game.Scripts.Management
 
         private ParticleManager _particleManager;
         private GameData _gameData;
+        private ITimeManager _timeManager;
 
         [Inject]
-        public void Construct(ParticleManager particleManager, GameData gameData)
+        public void Construct(ParticleManager particleManager, GameData gameData, ITimeManager timeManager)
         {
             _particleManager = particleManager;
             _gameData = gameData;
+            _timeManager = timeManager;
         }
-
+       
         private void Start()
         {
             CreateItemIndicators();
-           // TimeManager.OnTimeFinished += LevelFail;
+            _timeManager.OnTimerFinished += LevelFail;
         }
-
+       
         /// <summary>
         /// Creates and initializes item indicators based on the current level's data.
         /// </summary>
@@ -143,6 +146,7 @@ namespace _Game.Scripts.Management
         {
             Time.timeScale = 1;
             SceneManager.LoadScene(0);
+
             Debug.Log("Navigated to Menu");
         }
 
