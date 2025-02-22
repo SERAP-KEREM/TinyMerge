@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using Zenject;
+using TriInspector;
 
 namespace _Main._InputSystem
 {
@@ -12,7 +13,7 @@ namespace _Main._InputSystem
         #region Serialized Fields
 
         [Header("Input Settings")]
-        [Tooltip("Scriptable object for handling player input.")]
+        [Required, PropertyTooltip("Scriptable object for handling player input.")]
         [SerializeField]
         private PlayerInput _playerInput;
 

@@ -4,6 +4,7 @@ using TMPro;
 using Zenject;
 using DG.Tweening;
 using _Main._Management;
+using TriInspector;
 
 namespace _Main._UI
 {
@@ -15,30 +16,30 @@ namespace _Main._UI
         #region Serialized Fields
 
         [Header("Panel")]
-        [Tooltip("Canvas group for controlling the panel's visibility and fade effects.")]
+        [PropertyTooltip("Canvas group for controlling the panel's visibility and fade effects.")]
         [SerializeField]
         private CanvasGroup _canvasGroup;
 
         [Header("Audio Settings")]
-        [Tooltip("Slider for adjusting music volume.")]
+        [PropertyTooltip("Slider for adjusting music volume.")]
         [SerializeField]
         private Slider _musicSlider;
 
-        [Tooltip("Text displaying the current music volume percentage.")]
+        [PropertyTooltip("Text displaying the current music volume percentage.")]
         [SerializeField]
         private TextMeshProUGUI _musicValueText;
 
         [Header("Buttons")]
-        [Tooltip("Button to resume the game.")]
+        [PropertyTooltip("Button to resume the game.")]
         [SerializeField]
         private Button _resumeButton;
 
-        [Tooltip("Button to restart the level.")]
+        [PropertyTooltip("Button to restart the level.")]
         [SerializeField]
         private Button _restartButton;
-
+            
         [Header("Animation")]
-        [Tooltip("Duration of the fade-in/fade-out animation.")]
+        [PropertyTooltip("Duration of the fade-in/fade-out animation.")]
         [SerializeField]
         private float _fadeTime = 0.3f;
 

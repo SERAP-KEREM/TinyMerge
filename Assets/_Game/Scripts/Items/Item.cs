@@ -1,6 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
 using Zenject;
+using TriInspector;
 using _Main._Tiles;
 using _Main._Management;
 using System;
@@ -16,70 +17,70 @@ namespace _Main._Items
         #region Serialized Fields
 
         [Header("Item Properties")]
-        [Tooltip("Unique identifier for the item.")]
+        [Required, PropertyTooltip("Unique identifier for the item.")]
         [SerializeField]
         private int _itemId;
 
-        [Tooltip("Icon representing the item.")]
+        [PropertyTooltip("Icon representing the item.")]
         [SerializeField]
         private Sprite _itemIcon;
 
         [Header("Tile Parameters")]
-        [Tooltip("Tile associated with the item.")]
+        [PropertyTooltip("Tile associated with the item.")]
         [SerializeField]
         private Tile _itemTile;
 
         [Header("Item Move Settings")]
-        [Tooltip("Duration for items to move to their new positions.")]
+        [PropertyTooltip("Duration for items to move to their new positions.")]
         [SerializeField]
         private float _itemMoveDuration = 0.5f;
 
-        [Tooltip("Position offset when the item moves.")]
+        [PropertyTooltip("Position offset when the item moves.")]
         [SerializeField]
         private Vector3 _itemPositionOffset = Vector3.up;
 
         [Header("Scale Parameters")]
-        [Tooltip("Rotation of the item when it is collected.")]
+        [PropertyTooltip("Rotation of the item when it is collected.")]
         [SerializeField]
         private Vector3 _itemCollectRotation = new Vector3(0f, 90f, 90f);
 
-        [Tooltip("Scale multiplier for the item when it is in its normal state.")]
+        [PropertyTooltip("Scale multiplier for the item when it is in its normal state.")]
         [SerializeField]
         private float _itemNormalScaleMultiplier = 1f;
 
-        [Tooltip("Scale multiplier for the item when it is selected.")]
+        [PropertyTooltip("Scale multiplier for the item when it is selected.")]
         [SerializeField]
         private float _itemSelectedMultiplier = 1.25f;
 
-        [Tooltip("Scale multiplier for the item when it is collected.")]
+        [PropertyTooltip("Scale multiplier for the item when it is collected.")]
         [SerializeField]
         private float _itemCollectedScaleMultiplier = 0.5f;
 
-        [Tooltip("Duration of the scale change animation.")]
+        [PropertyTooltip("Duration of the scale change animation.")]
         [SerializeField]
         private float _itemScaleChangeDuration = 0.2f;
 
         [Header("Materials")]
-        [Tooltip("Material when the item is selected.")]
+        [PropertyTooltip("Material when the item is selected.")]
         [SerializeField]
         private Material _itemSelectedMaterial;
 
-        [Tooltip("Material when the item is not selected.")]
+        [PropertyTooltip("Material when the item is not selected.")]
         [SerializeField]
         private Material _itemDefaultMaterial;
 
         [Header("Effects")]
-        [Tooltip("Particle effect key for when the item is collected.")]
+        [PropertyTooltip("Particle effect key for when the item is collected.")]
         [SerializeField]
         private string _itemCollectParticleKey = "ItemCollect";
 
-        [Tooltip("Audio clip key for when the item is collected.")]
+        [PropertyTooltip("Audio clip key for when the item is collected.")]
         [SerializeField]
         private string _itemCollectClipKey = "ItemCollect";
 
         [Header("References")]
-        [Tooltip("Renderer component")]
-        [SerializeField]
+        [PropertyTooltip("Renderer component")]
+        [SerializeField, Required]
         private Renderer _renderer;
 
         #endregion
@@ -88,7 +89,6 @@ namespace _Main._Items
 
         private Rigidbody _rigidbody;
         private bool _isCollectable = true;
-
         private ParticleManager _particleManager;
         private AudioManager _audioManager;
 

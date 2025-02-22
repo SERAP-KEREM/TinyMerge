@@ -1,4 +1,5 @@
 using _Main._Items;
+using TriInspector;
 using UnityEngine;
 
 namespace _Main._Tiles
@@ -10,7 +11,7 @@ namespace _Main._Tiles
     {
         #region Serialized Fields
 
-        [Tooltip("The item currently associated with this tile.")]
+        [PropertyTooltip("The item currently associated with this tile.")]
         [SerializeField]
         private Item _item;
 

@@ -2,6 +2,7 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using TriInspector;
 
 namespace _Main._Items
 {
@@ -14,20 +15,20 @@ namespace _Main._Items
         #region Serialized Fields
 
         [Header("UI Components")]
-        [Tooltip("The icon image for the item.")]
+        [Required, PropertyTooltip("The icon image for the item.")]
         [SerializeField]
         private Image _itemIcon;
 
-        [Tooltip("The text component displaying the quantity.")]
+        [Required, PropertyTooltip("The text component displaying the quantity.")]
         [SerializeField]
         private TextMeshProUGUI _quantityText;
 
         [Header("Scale Effects Parameters")]
-        [Tooltip("Duration for the scale pop effect when the quantity changes.")]
+        [PropertyTooltip("Duration for the scale pop effect when the quantity changes.")]
         [SerializeField]
         private float _scaleEffectDuration = 0.5f;
 
-        [Tooltip("The amount by which the item icon will pop up when the quantity decreases.")]
+        [PropertyTooltip("The amount by which the item icon will pop up when the quantity decreases.")]
         [SerializeField]
         private float _scalePopAmount = 1f;
 

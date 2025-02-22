@@ -2,6 +2,7 @@ using _Main._Data;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+using TriInspector;
 
 namespace _Main._Management
 {
@@ -13,25 +14,25 @@ namespace _Main._Management
         #region Serialized Fields
 
         [Header("Audio Manager Parameters")]
-        [Tooltip("List of audio configurations.")]
+        [PropertyTooltip("List of audio configurations.")]
         [SerializeField]
         private List<Audio> _audioList = new List<Audio>();
 
-        [Tooltip("Maximum number of AudioSource components to manage.")]
-        [SerializeField, Range(1, 20)]
+        [PropertyTooltip("Maximum number of AudioSource components to manage.")]
+        [SerializeField]
         private int _maximumAudioCount = 10;
 
-        [Tooltip("Master volume for all audio.")]
-        [SerializeField, Range(0f, 1f)]
+        [PropertyTooltip("Master volume for all audio."), Range(0f, 1f)]
+        [SerializeField]
         private float _masterVolume = 1f;
 
-        [Tooltip("Mute all audio sources.")]
+        [PropertyTooltip("Mute all audio sources.")]
         [SerializeField]
         private bool _isAudioSourceMuted = false;
 
         [Header("Audio Mixer")]
-        [Tooltip("Audio mixer group for sound effects.")]
-        [SerializeField]
+        [PropertyTooltip("Audio mixer group for sound effects.")]
+        [SerializeField, Required]
         private AudioMixerGroup _soundMixerGroup;
 
         #endregion

@@ -1,6 +1,7 @@
 using _Main._Data;
 using _Main._InputSystem;
 using _Main._Management;
+using TriInspector;
 using UnityEngine;
 using Zenject;
 
@@ -14,37 +15,29 @@ namespace _Game._Zenject
         #region Serialized Fields
 
         [Header("Managers")]
-        [Tooltip("Manager responsible for handling items.")]
-        [SerializeField]
+        [SerializeField, PropertyTooltip("Manager responsible for handling items.")]
         private ItemManager _itemManager;
 
-        [Tooltip("Manager responsible for handling levels.")]
-        [SerializeField]
+        [SerializeField, PropertyTooltip("Manager responsible for handling levels.")]
         private LevelManager _levelManager;
 
-        [Tooltip("Manager responsible for handling particles.")]
-        [SerializeField]
+        [SerializeField, PropertyTooltip("Manager responsible for handling particles.")]
         private ParticleManager _particleManager;
 
-        [Tooltip("Manager responsible for handling tiles.")]
-        [SerializeField]
+        [SerializeField, PropertyTooltip("Manager responsible for handling tiles.")]
         private TileManager _tileManager;
 
-        [Tooltip("Manager responsible for handling special skills.")]
-        [SerializeField]
+        [SerializeField, PropertyTooltip("Manager responsible for handling special skills.")]
         private SpecialSkillManager _specialSkillManager;
 
-        [Tooltip("Manager responsible for handling audio.")]
-        [SerializeField]
+        [SerializeField, PropertyTooltip("Manager responsible for handling audio.")]
         private AudioManager _audioManager;
 
         [Header("Scriptable Objects")]
-        [Tooltip("ScriptableObject storing player input data.")]
-        [SerializeField]
+        [SerializeField, PropertyTooltip("ScriptableObject storing player input data.")]
         private PlayerInput _playerInput;
 
-        [Tooltip("ScriptableObject storing global game data.")]
-        [SerializeField]
+        [SerializeField, PropertyTooltip("ScriptableObject storing global game data.")]
         private GameData _gameDataAsset;
 
         #endregion
@@ -70,21 +63,10 @@ namespace _Game._Zenject
         private void InstallManagers()
         {
             // Bind managers provided via inspector
-            Container.Bind<ItemManager>()
-                .FromInstance(_itemManager)
-                .AsSingle();
-
-            Container.Bind<LevelManager>()
-                .FromInstance(_levelManager)
-                .AsSingle();
-
-            Container.Bind<ParticleManager>()
-                .FromInstance(_particleManager)
-                .AsSingle();
-
-            Container.Bind<TileManager>()
-                .FromInstance(_tileManager)
-                .AsSingle();
+            Container.Bind<ItemManager>().FromInstance(_itemManager).AsSingle();
+            Container.Bind<LevelManager>().FromInstance(_levelManager).AsSingle();
+            Container.Bind<ParticleManager>().FromInstance(_particleManager).AsSingle();
+            Container.Bind<TileManager>().FromInstance(_tileManager).AsSingle();
 
             // Bind TimeManager as a new GameObject in the scene
             Container.BindInterfacesAndSelfTo<TimeManager>()
@@ -93,22 +75,14 @@ namespace _Game._Zenject
                 .AsSingle()
                 .NonLazy();
 
-            // Bind SpecialSkillManager as a new prefab instance
-            Container.BindInterfacesAndSelfTo<SpecialSkillManager>()
-                .FromComponentInNewPrefab(_specialSkillManager)
-                .AsSingle()
-                .NonLazy();
+            // Bind SpecialSkillManager from an existing component in the hierarchy
+            Container.Bind<SpecialSkillManager>().FromInstance(_specialSkillManager).AsSingle();
 
             // Bind UIManager from an existing component in the hierarchy
-            Container.BindInterfacesAndSelfTo<UIManager>()
-                .FromComponentInHierarchy()
-                .AsSingle();
+            Container.Bind<UIManager>().FromComponentInHierarchy().AsSingle();
 
-            // Bind AudioManager as a new prefab instance
-            Container.Bind<AudioManager>()
-                .FromComponentInNewPrefab(_audioManager)
-                .AsSingle()
-                .NonLazy();
+            // Bind AudioManager from an existing component in the hierarchy
+            Container.Bind<AudioManager>().FromInstance(_audioManager).AsSingle();
         }
 
         #endregion
@@ -121,14 +95,10 @@ namespace _Game._Zenject
         private void InstallScriptableObjects()
         {
             // Bind PlayerInput ScriptableObject
-            Container.Bind<PlayerInput>()
-                .FromScriptableObject(_playerInput)
-                .AsSingle();
+            Container.Bind<PlayerInput>().FromScriptableObject(_playerInput).AsSingle();
 
             // Bind GameData ScriptableObject
-            Container.Bind<GameData>()
-                .FromScriptableObject(_gameDataAsset)
-                .AsSingle();
+            Container.Bind<GameData>().FromScriptableObject(_gameDataAsset).AsSingle();
         }
 
         #endregion

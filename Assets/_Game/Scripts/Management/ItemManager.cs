@@ -6,6 +6,7 @@ using Zenject;
 using _Main._Data;
 using _Main._Items;
 using _Main._Tiles;
+using TriInspector;
 
 namespace _Main._Management
 {
@@ -18,7 +19,7 @@ namespace _Main._Management
         #region Serialized Fields
 
         [Header("Level Configuration")]
-        [SerializeField, Tooltip("Configuration data for the level, including items.")]
+        [SerializeField, PropertyTooltip("Configuration data for the level, including items.")]
         private GameData _gameData;
 
         [Header("Item Lists")]
@@ -39,41 +40,41 @@ namespace _Main._Management
         private List<Item> _collectedItems = new List<Item>();
 
         [Header("Item Creation Settings")]
-        [SerializeField, Tooltip("Time interval between creating each item."), Range(0.001f, 0.1f)]
+        [SerializeField, PropertyTooltip("Time interval between creating each item."), Range(0.001f, 0.1f)]
         private float _itemCreationInterval = 0.1f;
 
-        [SerializeField, Tooltip("The minimum rotation values (x, y, z) for the randomly generated item.")]
+        [SerializeField, PropertyTooltip("The minimum rotation values (x, y, z) for the randomly generated item.")]
         private Vector3 _minRotation = Vector3.zero;
 
-        [SerializeField, Tooltip("The maximum rotation values (x, y, z) for the randomly generated item.")]
+        [SerializeField, PropertyTooltip("The maximum rotation values (x, y, z) for the randomly generated item.")]
         private Vector3 _maxRotation = new Vector3(360f, 360f, 360f);
 
         [Header("Spawn Area Settings")]
-        [SerializeField, Tooltip("Minimum and maximum spawn positions on the horizontal axis.")]
+        [SerializeField, PropertyTooltip("Minimum and maximum spawn positions on the horizontal axis.")]
         private Vector2 _horizontalSpawnRange = new Vector2(-5f, 5f);
 
-        [SerializeField, Tooltip("Minimum and maximum spawn positions on the vertical axis.")]
+        [SerializeField, PropertyTooltip("Minimum and maximum spawn positions on the vertical axis.")]
         private Vector2 _verticalSpawnRange = new Vector2(-5f, 5f);
 
-        [SerializeField, Tooltip("Minimum and maximum spawn positions on the upward axis.")]
+        [SerializeField, PropertyTooltip("Minimum and maximum spawn positions on the upward axis.")]
         private Vector2 _upwardSpawnRange = new Vector2(5f, 10f);
 
-        [SerializeField, Tooltip("Height at which items are spawned.")]
+        [SerializeField, PropertyTooltip("Height at which items are spawned.")]
         private float _spawnHeight = 1f;
 
-        [Header("Effects")]
+   
         [Header("Particle Effects")]
-        [SerializeField, Tooltip("Particle effect key for item recycling.")]
+        [SerializeField, PropertyTooltip("Particle effect key for item recycling.")]
         private string _itemRecycleParticleKey = "ItemRecycle";
 
-        [SerializeField, Tooltip("Particle effect key for item destruction.")]
+        [SerializeField, PropertyTooltip("Particle effect key for item destruction.")]
         private string _itemDestroyParticleKey = "ItemDestroy";
 
         [Header("Audio Effects")]
-        [SerializeField, Tooltip("Audio clip key for item recycling.")]
+        [SerializeField, PropertyTooltip("Audio clip key for item recycling.")]
         private string _itemRecycleClipKey = "ItemRecycle";
 
-        [SerializeField, Tooltip("Audio clip key for item destruction.")]
+        [SerializeField, PropertyTooltip("Audio clip key for item destruction.")]
         private string _itemDestroyClipKey = "ItemDestroy";
 
         #endregion
@@ -333,39 +334,11 @@ namespace _Main._Management
         #region Utility Methods
 
         /// <summary>
-        /// Gets the position of an available tile for item placement.
-        /// </summary>
-        public Vector3 GetAvailableTilePosition()
-        {
-            var emptyTile = _tileManager.FindEmptyTile();
-            return emptyTile != null ? emptyTile.transform.position : Vector3.zero;
-        }
-
-        /// <summary>
         /// Gets the last collected item without removing it from the collected items list.
         /// </summary>
         public Item GetLastCollectedItem()
         {
             return _collectedItems.Count > 0 ? _collectedItems.Last() : null;
-        }
-
-        /// <summary>
-        /// Draws the spawn area in the editor for visualization purposes.
-        /// </summary>
-        private void OnDrawGizmosSelected()
-        {
-            Gizmos.color = Color.yellow;
-            Vector3 center = new Vector3(
-                (_horizontalSpawnRange.x + _horizontalSpawnRange.y) / 2,
-                _spawnHeight,
-                (_verticalSpawnRange.x + _verticalSpawnRange.y) / 2
-            );
-            Vector3 size = new Vector3(
-                Mathf.Abs(_horizontalSpawnRange.y - _horizontalSpawnRange.x),
-                Mathf.Abs(_upwardSpawnRange.y - _upwardSpawnRange.x),
-                Mathf.Abs(_verticalSpawnRange.y - _verticalSpawnRange.x)
-            );
-            Gizmos.DrawWireCube(center, size);
         }
 
         #endregion

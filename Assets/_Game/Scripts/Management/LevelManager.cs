@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using UnityEngine.Events;
 using Zenject;
+using TriInspector;
 using _Main._Items;
 using _Main._Data;
 
@@ -17,36 +18,36 @@ namespace _Main._Management
         #region Serialized Fields
 
         [Header("Indicator Settings")]
-        [Tooltip("Parent transform for item indicators.")]
-        [SerializeField]
+        [PropertyTooltip("Parent transform for item indicators.")]
+        [SerializeField, Required]
         private Transform _indicatorsParent;
 
-        [Tooltip("Prefab for item indicators.")]
-        [SerializeField]
+        [PropertyTooltip("Prefab for item indicators.")]
+        [SerializeField, Required]
         private ItemIndicator _indicatorPrefab;
 
         [Header("Effects")]
-        [Tooltip("Positions where fireworks particle effects will be played.")]
+        [PropertyTooltip("Positions where fireworks particle effects will be played.")]
         [SerializeField]
         private List<Vector3> _fireworksParticlePositions;
 
-        [Tooltip("Key for the fireworks particle effect.")]
+        [PropertyTooltip("Key for the fireworks particle effect.")]
         [SerializeField]
         private string _fireworksParticleKey = "Fireworks";
 
-        [Tooltip("Audio clip key for the fireworks sound.")]
+        [PropertyTooltip("Audio clip key for the fireworks sound.")]
         [SerializeField]
         private string _fireworksClipKey = "Fireworks";
 
-        [Tooltip("Audio clip key for level completion sound.")]
+        [PropertyTooltip("Audio clip key for level completion sound.")]
         [SerializeField]
         private string _levelCompleteClipKey = "LevelComplete";
 
-        [Tooltip("Audio clip key for level failure sound.")]
+        [PropertyTooltip("Audio clip key for level failure sound.")]
         [SerializeField]
         private string _levelFailClipKey = "LevelFail";
 
-        [Tooltip("Audio clip key for background music.")]
+        [PropertyTooltip("Audio clip key for background music.")]
         [SerializeField]
         private string _backgroundMusicClipKey = "BackgroundMusic";
 
@@ -56,15 +57,25 @@ namespace _Main._Management
 
         private Dictionary<int, ItemIndicator> _itemIndicators = new Dictionary<int, ItemIndicator>();
         private Dictionary<int, int> _requiredItemCounts = new Dictionary<int, int>();
+
         private int _currentLevelIndex = 0;
 
         public UnityAction OnLevelFailed;
         public UnityAction OnLevelCompleted;
 
+        [Inject, Required]
         private ParticleManager _particleManager;
+
+        [Inject, Required]
         private GameData _gameData;
+
+        [Inject, Required]
         private AudioManager _audioManager;
+
+        [Inject, Required]
         private ITimeManager _timeManager;
+
+        [Inject, Required]
         private UIManager _uIManager;
 
         #endregion
@@ -106,7 +117,6 @@ namespace _Main._Management
         /// </summary>
         private void ApplySavedMusicVolume()
         {
-          //  float savedVolume = LoadManager.LoadData<float>("MusicVolume", 1f);
             float savedVolume = PlayerPrefs.GetFloat("MusicVolume", 1f);
             AudioSource[] audioSources = FindObjectsOfType<AudioSource>();
             foreach (var source in audioSources)
@@ -234,16 +244,6 @@ namespace _Main._Management
             SceneManager.LoadScene((SceneManager.GetActiveScene().buildIndex + 1) %
                 SceneManager.sceneCountInBuildSettings);
             Debug.Log("Next Level");
-        }
-
-        /// <summary>
-        /// Navigates to the main menu scene.
-        /// </summary>
-        public void Menu()
-        {
-            Time.timeScale = 1;
-            SceneManager.LoadScene(0);
-            Debug.Log("Navigated to Menu");
         }
 
         #endregion

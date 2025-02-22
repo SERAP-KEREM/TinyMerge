@@ -1,6 +1,7 @@
 using _Main._Data;
 using System.Collections;
 using System.Collections.Generic;
+using TriInspector;
 using UnityEngine;
 using Zenject;
 
@@ -14,7 +15,7 @@ namespace _Main._Management
         #region Serialized Fields
 
         [Header("Particle Configuration")]
-        [Tooltip("List of particle data configurations.")]
+        [PropertyTooltip("List of particle data configurations.")]
         public List<ParticleData> ParticleDataList = new List<ParticleData>();
 
         [HideInInspector]

@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using Zenject;
+using TriInspector;
 
 namespace _Main._InputSystem
 {
@@ -15,16 +16,19 @@ namespace _Main._InputSystem
         /// <summary>
         /// Event triggered when the mouse button is pressed down.
         /// </summary>
+        [ShowInInspector, ReadOnly, PropertyTooltip("Event triggered when the mouse button is pressed down.")]
         public UnityAction OnMouseDown;
 
         /// <summary>
         /// Event triggered while the mouse button is held down.
         /// </summary>
+        [ShowInInspector, ReadOnly, PropertyTooltip("Event triggered while the mouse button is held down.")]
         public UnityAction OnMouseHeld;
 
         /// <summary>
         /// Event triggered when the mouse button is released.
         /// </summary>
+        [ShowInInspector, ReadOnly, PropertyTooltip("Event triggered when the mouse button is released.")]
         public UnityAction OnMouseUp;
 
         #endregion
@@ -34,16 +38,19 @@ namespace _Main._InputSystem
         /// <summary>
         /// Current mouse position in screen coordinates.
         /// </summary>
+        [ShowInInspector, ReadOnly, PropertyTooltip("Current mouse position in screen coordinates.")]
         public Vector3 MousePosition { get; private set; }
 
         /// <summary>
         /// Indicates whether the mouse button is currently being held down.
         /// </summary>
+        [ShowInInspector, ReadOnly, PropertyTooltip("Indicates whether the mouse button is currently being held down.")]
         public bool IsMouseHeld { get; private set; }
 
         /// <summary>
         /// Indicates whether the mouse button was released.
         /// </summary>
+        [ShowInInspector, ReadOnly, PropertyTooltip("Indicates whether the mouse button was released.")]
         public bool IsMouseUp { get; private set; }
 
         #endregion
@@ -85,5 +92,6 @@ namespace _Main._InputSystem
         }
 
         #endregion
+
     }
 }

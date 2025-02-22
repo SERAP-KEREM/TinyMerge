@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using TriInspector;
 
 namespace _Main._Data
 {
@@ -12,13 +13,13 @@ namespace _Main._Data
         #region Serialized Fields
 
         [Header("Particle Settings")]
-        [Tooltip("The name of the particle system.")]
+        [PropertyTooltip("The name of the particle system.")]
         public string ParticleName;
 
-        [Tooltip("The number of particles to create.")]
+        [PropertyTooltip("The number of particles to create.")]
         public int ParticleCount = 5;
 
-        [Tooltip("The particle system reference.")]
+        [PropertyTooltip("The particle system reference.")]
         public ParticleSystem ParticleSystem;
 
         #endregion

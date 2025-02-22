@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using Zenject;
+using TriInspector;
 using _Main._Items;
 
 namespace _Main._Data
@@ -14,12 +15,10 @@ namespace _Main._Data
         #region Timer Settings
 
         [Header("Timer Settings")]
-        [Tooltip("Initial time for the level in seconds.")]
-        [Range(30f, 600f)]
+        [Required, PropertyTooltip("Initial time for the level in seconds."), Range(30f, 600f)]
         public float InitialTime = 180f;
 
-        [Tooltip("Critical time threshold in seconds.")]
-        [Range(0f, 20f)]
+        [Required, PropertyTooltip("Critical time threshold in seconds."), Range(0f, 20f)]
         public float CriticalTimeThreshold = 10f;
 
         #endregion
@@ -27,7 +26,7 @@ namespace _Main._Data
         #region Items
 
         [Header("Items")]
-        [Tooltip("List of item data for creation and requirements.")]
+        [Required, PropertyTooltip("List of item data for creation and requirements.")]
         public List<ItemData> ItemDataList;
 
         #endregion
@@ -41,13 +40,13 @@ namespace _Main._Data
         public class ItemData
         {
             [Header("Item Prefab Settings")]
-            [Tooltip("The item prefab.")]
+            [Required, PropertyTooltip("The item prefab.")]
             public Item ItemPrefab;
 
-            [Tooltip("The number of items to create. Adjusted to a multiple of three.")]
+            [Required, PropertyTooltip("The number of items to create. Adjusted to a multiple of three.")]
             public int ItemCount;
 
-            [Tooltip("Whether this item is required.")]
+            [PropertyTooltip("Whether this item is required.")]
             public bool IsRequired;
         }
 

@@ -5,6 +5,7 @@ using Zenject;
 using DG.Tweening;
 using _Main._Management;
 using _Main._Data;
+using TriInspector;
 
 namespace _Main._UI
 {
@@ -16,25 +17,25 @@ namespace _Main._UI
         #region Serialized Fields
 
         [Header("Info Texts")]
-        [Tooltip("Text displaying the current level.")]
+        [PropertyTooltip("Text displaying the current level.")]
         [SerializeField]
         private TextMeshProUGUI _levelText;
 
-        [Tooltip("Text displaying the remaining time.")]
+        [PropertyTooltip("Text displaying the remaining time.")]
         [SerializeField]
         private TextMeshProUGUI _timerText;
 
         [Header("Settings")]
-        [Tooltip("Button to open the settings panel.")]
+        [PropertyTooltip("Button to open the settings panel.")]
         [SerializeField]
         private Button _settingsButton;
 
         [Header("Timer Effects")]
-        [Tooltip("Color applied to the timer text when time is critical.")]
+        [PropertyTooltip("Color applied to the timer text when time is critical.")]
         [SerializeField]
         private Color _criticalTimeColor = Color.red;
 
-        [Tooltip("Threshold (in seconds) for applying critical time effects.")]
+        [PropertyTooltip("Threshold (in seconds) for applying critical time effects.")]
         [SerializeField]
         private float _criticalTimeThreshold = 10f;
 

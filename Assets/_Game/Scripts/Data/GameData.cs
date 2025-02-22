@@ -2,6 +2,7 @@ using _Main._SaveSystem;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
+using TriInspector;
 
 namespace _Main._Data
 {
@@ -14,13 +15,11 @@ namespace _Main._Data
         #region Serialized Fields
 
         [Header("Game Configuration")]
-        [Tooltip("List of levels in the game.")]
+        [Required, PropertyTooltip("List of levels in the game.")]
         [SerializeField]
         private List<LevelConfig> _levelList;
 
-        [Tooltip("Current level index in the game.")]
-        [HideInInspector] // Managed through SaveManager, so it should not be editable in the inspector.
-        [SerializeField]
+        [HideInInspector, SerializeField, PropertyTooltip("Current level index in the game. Managed through SaveManager.")]
         private int _currentLevelIndex;
 
         #endregion
@@ -32,13 +31,14 @@ namespace _Main._Data
         /// When setting, it saves the new value using SaveManager.
         /// When getting, it loads the value from SaveManager and ensures it wraps around the level list.
         /// </summary>
+        [ShowInInspector, ReadOnly, PropertyTooltip("The current level index, managed by SaveManager.")]
         public int CurrentLevelIndex
         {
             get
             {
                 // Load the level index from SaveManager and ensure it wraps around the level list.
                 _currentLevelIndex = SaveManager.LoadLevelIndex();
-                return _currentLevelIndex % _levelList.Count;
+                return _currentLevelIndex % (_levelList?.Count ?? 1);
             }
             set
             {
@@ -51,7 +51,8 @@ namespace _Main._Data
         /// <summary>
         /// Gets the configuration of the current level based on the index.
         /// </summary>
-        public LevelConfig CurrentLevel => _levelList[CurrentLevelIndex];
+        [ShowInInspector, ReadOnly, PropertyTooltip("The configuration of the current level.")]
+        public LevelConfig CurrentLevel => _levelList?[CurrentLevelIndex];
 
         #endregion
 

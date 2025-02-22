@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using Zenject;
 using DG.Tweening;
 using _Main._Management;
+using TriInspector;
 
 namespace _Main._UI
 {
@@ -14,21 +15,21 @@ namespace _Main._UI
         #region Serialized Fields
 
         [Header("Panel")]
-        [Tooltip("Canvas group for controlling the panel's visibility and fade effects.")]
+        [PropertyTooltip("Canvas group for controlling the panel's visibility and fade effects.")]
         [SerializeField]
         private CanvasGroup _canvasGroup;
 
         [Header("Buttons")]
-        [Tooltip("Button to proceed to the next level.")]
+        [PropertyTooltip("Button to proceed to the next level.")]
         [SerializeField]
         private Button _nextLevelButton;
 
-        [Tooltip("Button to restart the current level.")]
+        [PropertyTooltip("Button to restart the current level.")]
         [SerializeField]
         private Button _restartButton;
 
-        [Header("Animation")]
-        [Tooltip("Duration of the fade-in/fade-out animation.")]
+       [Header("Animation")]
+        [PropertyTooltip("Duration of the fade-in/fade-out animation.")]
         [SerializeField]
         private float _fadeTime = 0.3f;
 

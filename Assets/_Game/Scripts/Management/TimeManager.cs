@@ -3,6 +3,7 @@ using UnityEngine.Events;
 using DG.Tweening;
 using Zenject;
 using _Main._Data;
+using TriInspector;
 
 namespace _Main._Management
 {
@@ -28,10 +29,10 @@ namespace _Main._Management
         #region Serialized Fields
 
         [Header("Timer Settings")]
-        [Tooltip("Update interval for the timer (in seconds).")]
+        [PropertyTooltip("Update interval for the timer (in seconds).")]
         private float _updateInterval = 0.1f;
 
-        [Tooltip("Threshold for critical time (in seconds).")]
+        [PropertyTooltip("Threshold for critical time (in seconds).")]
         private float _criticalTimeThreshold = 10f;
 
         #endregion

@@ -1,6 +1,7 @@
 using _Main._UI;
 using DG.Tweening;
 using System.Collections;
+using TriInspector;
 using UnityEngine;
 
 namespace _Main._Management
@@ -13,24 +14,24 @@ namespace _Main._Management
         #region Serialized Fields
 
         [Header("Gameplay UI")]
-        [Tooltip("The main gameplay UI.")]
+        [PropertyTooltip("The main gameplay UI.")]
         [SerializeField]
         private GameplayUI _gameplayUI;
 
-        [Tooltip("The settings panel UI.")]
+        [PropertyTooltip("The settings panel UI.")]
         [SerializeField]
         private SettingsPanelUI _settingsPanel;
 
-        [Tooltip("The win panel UI.")]
+        [PropertyTooltip("The win panel UI.")]
         [SerializeField]
         private WinPanelUI _winPanel;
 
-        [Tooltip("The fail panel UI.")]
+        [PropertyTooltip("The fail panel UI.")]
         [SerializeField]
         private FailPanelUI _failPanel;
 
         [Header("Freeze Screen")]
-        [Tooltip("Canvas group for the freeze screen effect.")]
+        [PropertyTooltip("Canvas group for the freeze screen effect.")]
         [SerializeField]
         private CanvasGroup _freezeScreenCanvasGroup;
 

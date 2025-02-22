@@ -1,4 +1,5 @@
 using System;
+using TriInspector;
 using UnityEngine;
 
 namespace _Main._SaveSystem
@@ -13,7 +14,7 @@ namespace _Main._SaveSystem
         #region Serialized Fields
 
         [Header("Game Progress")]
-        [Tooltip("The index of the current level the player is on.")]
+        [PropertyTooltip("The index of the current level the player is on.")]
         [SerializeField]
         private int _currentLevelIndex = 0;
 

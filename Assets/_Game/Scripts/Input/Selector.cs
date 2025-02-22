@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Zenject;
+using TriInspector;
 using _Main._Management;
 using _Main._Interfaces;
 
@@ -14,24 +15,30 @@ namespace _Main._InputSystem
         #region Serialized Fields
 
         [Header("Camera Settings")]
-        [SerializeField, Tooltip("Camera used for item selection.")]
+        [Required, PropertyTooltip("Camera used for item selection.")]
+        [SerializeField]
         private Camera _selectionCamera;
 
         [Header("Raycast Settings")]
-        [SerializeField, Tooltip("Layer mask for raycasting to filter raycast targets.")]
+        [PropertyTooltip("Layer mask for raycasting to filter raycast targets.")]
+        [SerializeField]
         private LayerMask _raycastLayerMask = ~0; // Default to all layers
 
-        [SerializeField, Tooltip("Maximum distance for the raycast.")]
+        [PropertyTooltip("Maximum distance for the raycast.")]
+        [SerializeField]
         private float _raycastLength = 100f;
 
         [Header("Raycast Gizmo Colors")]
-        [SerializeField, Tooltip("Color of the raycast when the mouse button is pressed down.")]
+        [PropertyTooltip("Color of the raycast when the mouse button is pressed down.")]
+        [SerializeField]
         private Color _mouseDownGizmoColor = Color.green;
 
-        [SerializeField, Tooltip("Color of the raycast when the mouse button is held.")]
+        [PropertyTooltip("Color of the raycast when the mouse button is held.")]
+        [SerializeField]
         private Color _mouseHoldGizmoColor = Color.yellow;
 
-        [SerializeField, Tooltip("Color of the raycast when the mouse button is released.")]
+        [PropertyTooltip("Color of the raycast when the mouse button is released.")]
+        [SerializeField]
         private Color _mouseUpGizmoColor = Color.red;
 
         #endregion
@@ -39,11 +46,10 @@ namespace _Main._InputSystem
         #region Dependencies
 
         [Header("Dependencies")]
-        [Tooltip("Scriptable object storing player input data.")]
-        [Inject]
+        [Inject, Required, PropertyTooltip("Scriptable object storing player input data.")]
         private PlayerInput _playerInput;
 
-        [Inject]
+        [Inject, Required, PropertyTooltip("Manager responsible for handling items.")]
         private ItemManager _itemManager;
 
         #endregion

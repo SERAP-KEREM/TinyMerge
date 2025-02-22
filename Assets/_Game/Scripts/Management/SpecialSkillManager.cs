@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using Zenject;
 using DG.Tweening;
 using System.Collections.Generic;
+using TriInspector;
 using _Main._Items;
 
 namespace _Main._Management
@@ -15,66 +16,66 @@ namespace _Main._Management
         #region Serialized Fields
 
         [Header("Skill Buttons")]
-        [Tooltip("Button to destroy three required items.")]
-        [SerializeField]
+        [PropertyTooltip("Button to destroy three required items.")]
+        [SerializeField, Required]
         private Button _destroyTripleItemButton;
 
-        [Tooltip("Button to shake items.")]
-        [SerializeField]
+        [PropertyTooltip("Button to shake items.")]
+        [SerializeField, Required]
         private Button _itemShakerButton;
 
-        [Tooltip("Button to recycle the last collected item.")]
-        [SerializeField]
+        [PropertyTooltip("Button to recycle the last collected item.")]
+        [SerializeField, Required]
         private Button _recycleItemButton;
 
-        [Tooltip("Button to freeze time.")]
-        [SerializeField]
+        [PropertyTooltip("Button to freeze time.")]
+        [SerializeField, Required]
         private Button _freezeTimeButton;
 
         [Header("Item Shaker Settings")]
-        [Tooltip("Minimum upward force applied to items during the shake.")]
+        [PropertyTooltip("Minimum upward force applied to items during the shake.")]
         [SerializeField]
         private float _minUpwardForce = 5f;
 
-        [Tooltip("Maximum upward force applied to items during the shake.")]
+        [PropertyTooltip("Maximum upward force applied to items during the shake.")]
         [SerializeField]
         private float _maxUpwardForce = 10f;
 
-        [Tooltip("Minimum horizontal force applied to items during the shake.")]
+        [PropertyTooltip("Minimum horizontal force applied to items during the shake.")]
         [SerializeField]
         private float _minHorizontalForce = 2f;
 
-        [Tooltip("Maximum horizontal force applied to items during the shake.")]
+        [PropertyTooltip("Maximum horizontal force applied to items during the shake.")]
         [SerializeField]
         private float _maxHorizontalForce = 5f;
 
-        [Tooltip("Minimum vertical force applied to items during the shake.")]
+        [PropertyTooltip("Minimum vertical force applied to items during the shake.")]
         [SerializeField]
         private float _minVerticalForce = 2f;
 
-        [Tooltip("Maximum vertical force applied to items during the shake.")]
+        [PropertyTooltip("Maximum vertical force applied to items during the shake.")]
         [SerializeField]
         private float _maxVerticalForce = 5f;
 
         [Header("Freeze Time Settings")]
-        [Tooltip("Duration for which time is frozen.")]
+        [PropertyTooltip("Duration for which time is frozen.")]
         [SerializeField]
         private float _timeFreezeDuration = 10f;
 
         [Header("Effects")]
-        [Tooltip("Particle effect key for the freeze effect.")]
+        [PropertyTooltip("Particle effect key for the freeze effect.")]
         [SerializeField]
         private string _freezeEffectParticleKey = "Freeze";
 
-        [Tooltip("Particle effect key for the item shaker.")]
+        [PropertyTooltip("Particle effect key for the item shaker.")]
         [SerializeField]
         private string _itemShakerParticleKey = "ItemShaker";
 
-        [Tooltip("Audio clip key for the freeze effect.")]
+        [PropertyTooltip("Audio clip key for the freeze effect.")]
         [SerializeField]
         private string _freezeEffectClipKey = "Freeze";
 
-        [Tooltip("Audio clip key for the item shaker.")]
+        [PropertyTooltip("Audio clip key for the item shaker.")]
         [SerializeField]
         private string _itemShakerClipKey = "ItemShaker";
 
@@ -82,33 +83,20 @@ namespace _Main._Management
 
         #region Private Fields
 
+        [Inject, Required]
         private ItemManager _itemManager;
+
+        [Inject, Required]
         private ITimeManager _timeManager;
+
+        [Inject, Required]
         private UIManager _uiManager;
+
+        [Inject, Required]
         private ParticleManager _particleManager;
+
+        [Inject, Required]
         private AudioManager _audioManager;
-
-        #endregion
-
-        #region Dependency Injection
-
-        /// <summary>
-        /// Injects dependencies required for the SpecialSkillManager.
-        /// </summary>
-        [Inject]
-        private void Construct(
-            ItemManager itemManager,
-            ITimeManager timeManager,
-            UIManager uiManager,
-            ParticleManager particleManager,
-            AudioManager audioManager)
-        {
-            _itemManager = itemManager;
-            _timeManager = timeManager;
-            _uiManager = uiManager;
-            _particleManager = particleManager;
-            _audioManager = audioManager;
-        }
 
         #endregion
 
@@ -121,17 +109,7 @@ namespace _Main._Management
 
         private void OnDestroy()
         {
-            if (_destroyTripleItemButton != null)
-                _destroyTripleItemButton.onClick.RemoveListener(OnDestroyTripleItem);
-
-            if (_itemShakerButton != null)
-                _itemShakerButton.onClick.RemoveListener(OnItemShaker);
-
-            if (_recycleItemButton != null)
-                _recycleItemButton.onClick.RemoveListener(OnRecycleItem);
-
-            if (_freezeTimeButton != null)
-                _freezeTimeButton.onClick.RemoveListener(OnFreezeTime);
+            RemoveButtonListeners();
         }
 
         #endregion
@@ -143,17 +121,39 @@ namespace _Main._Management
         /// </summary>
         private void InitializeButtons()
         {
-            if (_destroyTripleItemButton != null)
-                _destroyTripleItemButton.onClick.AddListener(OnDestroyTripleItem);
+            AddButtonListener(_destroyTripleItemButton, OnDestroyTripleItem);
+            AddButtonListener(_itemShakerButton, OnItemShaker);
+            AddButtonListener(_recycleItemButton, OnRecycleItem);
+            AddButtonListener(_freezeTimeButton, OnFreezeTime);
+        }
 
-            if (_itemShakerButton != null)
-                _itemShakerButton.onClick.AddListener(OnItemShaker);
+        /// <summary>
+        /// Removes all button listeners to prevent memory leaks.
+        /// </summary>
+        private void RemoveButtonListeners()
+        {
+            RemoveButtonListener(_destroyTripleItemButton, OnDestroyTripleItem);
+            RemoveButtonListener(_itemShakerButton, OnItemShaker);
+            RemoveButtonListener(_recycleItemButton, OnRecycleItem);
+            RemoveButtonListener(_freezeTimeButton, OnFreezeTime);
+        }
 
-            if (_recycleItemButton != null)
-                _recycleItemButton.onClick.AddListener(OnRecycleItem);
+        /// <summary>
+        /// Adds a listener to a button if it's not null.
+        /// </summary>
+        private void AddButtonListener(Button button, UnityEngine.Events.UnityAction action)
+        {
+            if (button != null)
+                button.onClick.AddListener(action);
+        }
 
-            if (_freezeTimeButton != null)
-                _freezeTimeButton.onClick.AddListener(OnFreezeTime);
+        /// <summary>
+        /// Removes a listener from a button if it's not null.
+        /// </summary>
+        private void RemoveButtonListener(Button button, UnityEngine.Events.UnityAction action)
+        {
+            if (button != null)
+                button.onClick.RemoveListener(action);
         }
 
         #endregion
@@ -173,9 +173,7 @@ namespace _Main._Management
         /// </summary>
         private void OnItemShaker()
         {
-            List<Item> items = _itemManager.ActiveItems;
-
-            foreach (Item item in items)
+            foreach (var item in _itemManager.ActiveItems)
             {
                 if (item.TryGetComponent<Rigidbody>(out var rb))
                 {
@@ -184,13 +182,11 @@ namespace _Main._Management
                         Random.Range(_minUpwardForce, _maxUpwardForce),
                         Random.Range(_minVerticalForce, _maxVerticalForce)
                     );
-
                     rb.AddForce(force, ForceMode.Impulse);
                 }
             }
 
-            _particleManager.PlayParticleAtPoint(_itemShakerParticleKey, Vector3.zero);
-            _audioManager.PlaySound(_itemShakerClipKey);
+            PlayEffect(_itemShakerParticleKey, Vector3.zero, _itemShakerClipKey);
         }
 
         /// <summary>
@@ -199,45 +195,66 @@ namespace _Main._Management
         private void OnRecycleItem()
         {
             var recycledItem = _itemManager.GetLastCollectedItem();
+            if (recycledItem == null) return;
 
-            if (recycledItem != null)
+            // Disable button during animation
+            if (_recycleItemButton != null)
+                _recycleItemButton.interactable = false;
+
+            // Random position within game bounds
+            Vector3 randomPosition = new Vector3(
+                Random.Range(-5f, 5f), // X-axis bounds
+                10f,                  // Height
+                Random.Range(-5f, 5f) // Z-axis bounds
+            );
+
+            // Rigidbody setup
+            if (recycledItem.TryGetComponent<Rigidbody>(out var rb))
             {
-                // Disable button during animation
-                if (_recycleItemButton != null)
-                    _recycleItemButton.interactable = false;
+                rb.isKinematic = true;
+                rb.useGravity = false;
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
 
-                if (recycledItem.TryGetComponent<Rigidbody>(out var rb))
+            // Animation sequence
+            Sequence sequence = DOTween.Sequence();
+            sequence.Append(recycledItem.transform.DOMove(randomPosition, 0.5f).SetEase(Ease.OutQuad));
+            sequence.OnComplete(() =>
+            {
+                if (rb != null)
                 {
-                    rb.isKinematic = true;
-                    rb.useGravity = false;
+                    rb.isKinematic = false;
+                    rb.useGravity = true;
+                    rb.constraints = RigidbodyConstraints.FreezeRotation;
+
+                    // Apply a small random force
+                    Vector3 randomForce = new Vector3(
+                        Random.Range(-2f, 2f),
+                        0f,
+                        Random.Range(-2f, 2f)
+                    );
+                    rb.AddForce(randomForce, ForceMode.Impulse);
                 }
 
-                Vector3 targetPosition = _itemManager.GetAvailableTilePosition();
+                _itemManager.RecycleLastCollectedItem();
 
-                recycledItem.transform.DOMove(targetPosition, 0.5f)
-                    .SetEase(Ease.OutBack)
-                    .OnComplete(() =>
+                DOVirtual.DelayedCall(1f, () =>
+                {
+                    if (rb != null)
                     {
-                        if (rb != null)
-                        {
-                            rb.isKinematic = false;
-                            rb.useGravity = true;
-                            rb.velocity = Vector3.zero;
-                            rb.angularVelocity = Vector3.zero;
+                        rb.velocity = Vector3.zero;
+                        rb.angularVelocity = Vector3.zero;
+                        rb.constraints = RigidbodyConstraints.FreezeRotation |
+                                         RigidbodyConstraints.FreezePositionX |
+                                         RigidbodyConstraints.FreezePositionZ;
+                    }
 
-                            // Freeze position except Y axis
-                            rb.constraints = RigidbodyConstraints.FreezeRotation |
-                                             RigidbodyConstraints.FreezePositionX |
-                                             RigidbodyConstraints.FreezePositionZ;
-                        }
-
-                        _itemManager.RecycleLastCollectedItem();
-
-                        // Re-enable button after animation
-                        if (_recycleItemButton != null)
-                            _recycleItemButton.interactable = true;
-                    });
-            }
+                    // Re-enable button
+                    if (_recycleItemButton != null)
+                        _recycleItemButton.interactable = true;
+                });
+            });
         }
 
         /// <summary>
@@ -247,8 +264,23 @@ namespace _Main._Management
         {
             _timeManager.FreezeTimer(_timeFreezeDuration);
             _uiManager.ActivateFreezeScreen(_timeFreezeDuration, 1f, 1f);
-            _particleManager.PlayParticleAtPoint(_freezeEffectParticleKey, Vector3.up * 2);
-            _audioManager.PlaySound(_freezeEffectClipKey);
+            PlayEffect(_freezeEffectParticleKey, Vector3.up * 2, _freezeEffectClipKey);
+        }
+
+        #endregion
+
+        #region Utility Methods
+
+        /// <summary>
+        /// Plays a particle effect and audio clip at the specified position.
+        /// </summary>
+        private void PlayEffect(string particleKey, Vector3 position, string audioKey)
+        {
+            if (_particleManager != null)
+                _particleManager.PlayParticleAtPoint(particleKey, position);
+
+            if (_audioManager != null)
+                _audioManager.PlaySound(audioKey);
         }
 
         #endregion
