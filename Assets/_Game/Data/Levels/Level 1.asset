@@ -12,18 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d8f66fe84b6f454e9328805fc750883, type: 3}
   m_Name: Level 1
   m_EditorClassIdentifier: 
-  InitialTime: 180
+  InitialTime: 60
   CriticalTimeThreshold: 10
   ItemDataList:
   - ItemPrefab: {fileID: 413044834557349426, guid: 7c5216158386e5746aaa3ffae19c2830, type: 3}
-    ItemCount: 5
+    ItemCount: 6
     IsRequired: 1
   - ItemPrefab: {fileID: 6907655278803269786, guid: 9cf934f4d1bef324383a83ea96296c64, type: 3}
-    ItemCount: 5
+    ItemCount: 6
     IsRequired: 1
   - ItemPrefab: {fileID: 4142406170501248743, guid: 339f5873a9904c84e9ba0a9e347a8e76, type: 3}
-    ItemCount: 5
-    IsRequired: 1
-  - ItemPrefab: {fileID: 4222654893531154424, guid: e458eef31ff57b749a77d42fdefbae65, type: 3}
-    ItemCount: 5
-    IsRequired: 1
+    ItemCount: 6
+    IsRequired: 0
+  - ItemPrefab: {fileID: 1352960642429184951, guid: 144ae49769402c2479de1be94550044d, type: 3}
+    ItemCount: 6
+    IsRequired: 0
+  - ItemPrefab: {fileID: 6243764397270171525, guid: d833ba8c364209642ae870bf6a0adf57, type: 3}
+    ItemCount: 6
+    IsRequired: 0

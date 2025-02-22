@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d8f66fe84b6f454e9328805fc750883, type: 3}
+  m_Name: Level 4
+  m_EditorClassIdentifier: 
+  InitialTime: 120
+  CriticalTimeThreshold: 10
+  ItemDataList:
+  - ItemPrefab: {fileID: 1698285228602757824, guid: aa30a560787f6a448a11fc0a39eadb1e, type: 3}
+    ItemCount: 9
+    IsRequired: 1
+  - ItemPrefab: {fileID: 6950758830753736679, guid: 78b44a489845f2144b49e46fded8bd95, type: 3}
+    ItemCount: 9
+    IsRequired: 1
+  - ItemPrefab: {fileID: 3148974517269910877, guid: 7e7ca5caeaba4a24e8d9b2c4ff3c4c9f, type: 3}
+    ItemCount: 9
+    IsRequired: 1
+  - ItemPrefab: {fileID: 442273014738842303, guid: a237d1f8449adf54f8a03faaf99476fa, type: 3}
+    ItemCount: 9
+    IsRequired: 0
+  - ItemPrefab: {fileID: 1864794362063838991, guid: ef9a485007243604597f5b14220c9b4c, type: 3}
+    ItemCount: 9
+    IsRequired: 0

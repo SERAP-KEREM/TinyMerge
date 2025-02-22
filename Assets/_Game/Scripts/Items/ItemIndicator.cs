@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace _Game.Scripts.Items
+namespace _Main._Items
 {
     /// <summary>
     /// Manages the display of an item indicator, including the icon and quantity text.
@@ -11,6 +11,8 @@ namespace _Game.Scripts.Items
     /// </summary>
     public class ItemIndicator : MonoBehaviour
     {
+        #region Serialized Fields
+
         [Header("UI Components")]
         [Tooltip("The icon image for the item.")]
         [SerializeField]
@@ -29,7 +31,15 @@ namespace _Game.Scripts.Items
         [SerializeField]
         private float _scalePopAmount = 1f;
 
+        #endregion
+
+        #region Private Fields
+
         private int _quantity;
+
+        #endregion
+
+        #region Initialization
 
         /// <summary>
         /// Initializes the indicator with an icon and a quantity.
@@ -42,6 +52,10 @@ namespace _Game.Scripts.Items
             SetQuantity(quantity);
         }
 
+        #endregion
+
+        #region Public Methods
+
         /// <summary>
         /// Sets the icon of the indicator.
         /// </summary>
@@ -50,10 +64,9 @@ namespace _Game.Scripts.Items
         {
             if (_itemIcon == null)
             {
-                Debug.LogWarning("Item icon Image component is not assigned.");
+                Debug.LogWarning("Item icon Image component is not assigned.", this);
                 return;
             }
-
             _itemIcon.sprite = icon;
         }
 
@@ -79,6 +92,10 @@ namespace _Game.Scripts.Items
             PlayDecreaseAnimation();
         }
 
+        #endregion
+
+        #region Private Methods
+
         /// <summary>
         /// Updates the quantity text to reflect the current quantity.
         /// </summary>
@@ -86,15 +103,14 @@ namespace _Game.Scripts.Items
         {
             if (_quantityText == null)
             {
-                Debug.LogWarning("Quantity TextMeshPro component is not assigned.");
+                Debug.LogWarning("Quantity TextMeshPro component is not assigned.", this);
                 return;
             }
-
             _quantityText.text = _quantity.ToString();
         }
 
         /// <summary>
-        /// Plays the scale animation when the quantity decreases. 
+        /// Plays the scale animation when the quantity decreases.
         /// If the quantity is zero, the item fades out.
         /// </summary>
         private void PlayDecreaseAnimation()
@@ -120,5 +136,7 @@ namespace _Game.Scripts.Items
         {
             transform.localScale = Vector3.one;
         }
+
+        #endregion
     }
 }

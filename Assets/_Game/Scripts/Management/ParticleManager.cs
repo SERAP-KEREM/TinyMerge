@@ -1,41 +1,44 @@
+using _Main._Data;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
-namespace _Game.Scripts._helpers
+namespace _Main._Management
 {
     /// <summary>
     /// Manages the generation, activation, and deactivation of particle effects in the game.
     /// </summary>
     public class ParticleManager : MonoBehaviour
     {
+        #region Serialized Fields
 
-        [Inject]
-       public List<ParticleData> ParticleDataList { get; private set; }
+        [Header("Particle Configuration")]
+        [Tooltip("List of particle data configurations.")]
+        public List<ParticleData> ParticleDataList = new List<ParticleData>();
 
-        //[Header("Particle Configuration")]
-        //[Tooltip("List of particle data configurations.")]
-        //public List<ParticleData> ParticleDataList = new List<ParticleData>();
         [HideInInspector]
         public List<ParticleSystem> ParticleList = new List<ParticleSystem>();
-      
-        private readonly List<ParticleData> _particleDataList;
 
-        [Inject]
-        public ParticleManager(List<ParticleData> particleDataList)
-        {
-            _particleDataList = particleDataList;
-        }
+        #endregion
 
+        #region Lifecycle Methods
+
+        /// <summary>
+        /// Initializes the particle manager by generating particles and resetting their states.
+        /// </summary>
         private void Awake()
         {
             GenerateParticles();
             StopAndDeactivateAllParticles();
         }
 
+        #endregion
+
+        #region Particle Generation
+
         /// <summary>
-        /// Generates the particles based on the configurations in ParticleDataList.
+        /// Generates particles based on the configurations in ParticleDataList.
         /// </summary>
         private void GenerateParticles()
         {
@@ -65,6 +68,10 @@ namespace _Game.Scripts._helpers
             }
         }
 
+        #endregion
+
+        #region Public Methods
+
         /// <summary>
         /// Plays a particle effect at the specified position with the given rotation and parent transform.
         /// </summary>
@@ -89,12 +96,12 @@ namespace _Game.Scripts._helpers
         /// <param name="parent">The parent transform to attach the particle to (optional).</param>
         public void PlayParticleAtPoint(string particleName, Vector3 position, Transform parent = null)
         {
-            var particle = GetAvailableParticle(particleName);
-            if (particle != null)
-            {
-                ActivateParticle(particle, position, Quaternion.identity, parent);
-            }
+            PlayParticleAtPoint(particleName, position, Quaternion.identity, parent);
         }
+
+        #endregion
+
+        #region Private Methods
 
         /// <summary>
         /// Retrieves an available particle system that matches the given name and is not currently playing.
@@ -110,6 +117,7 @@ namespace _Game.Scripts._helpers
                     return particle;
                 }
             }
+            Debug.LogWarning($"No available particle found with name: {particleName}");
             return null;
         }
 
@@ -130,12 +138,7 @@ namespace _Game.Scripts._helpers
 
             if (!particle.main.loop)
             {
-                Debug.Log($"{particle.name} is not looping");
                 StartCoroutine(DeactivateAfterTime(particle, particle.main.duration));
-            }
-            else
-            {
-                Debug.Log($"{particle.name} is looping");
             }
         }
 
@@ -149,5 +152,7 @@ namespace _Game.Scripts._helpers
             yield return new WaitForSeconds(time);
             particle.gameObject.SetActive(false);
         }
+
+        #endregion
     }
 }

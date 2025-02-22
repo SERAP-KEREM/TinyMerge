@@ -1,61 +1,111 @@
-using _Game.Scripts.Management;
+using _Main._UI;
+using DG.Tweening;
+using System.Collections;
 using UnityEngine;
-using Zenject;
 
-namespace _Game.Scripts.UI
+namespace _Main._Management
 {
+    /// <summary>
+    /// Manages the UI elements in the game, including panels, freeze screens, and animations.
+    /// </summary>
     public class UIManager : MonoBehaviour
     {
-        [SerializeField] private GameplayUI _gameplayUI;
-        [SerializeField] private SettingsPanelUI _settingsPanel;
-        [SerializeField] private WinPanelUI _winPanel;
-        [SerializeField] private FailPanelUI _failPanel;
+        #region Serialized Fields
 
-        private LevelManager _levelManager;
+        [Header("Gameplay UI")]
+        [Tooltip("The main gameplay UI.")]
+        [SerializeField]
+        private GameplayUI _gameplayUI;
 
-        [Inject]
-        private void Construct(LevelManager levelManager)
-        {
-            _levelManager = levelManager;
-            SubscribeToEvents();
-        }
+        [Tooltip("The settings panel UI.")]
+        [SerializeField]
+        private SettingsPanelUI _settingsPanel;
 
-        private void OnDestroy()
-        {
-            UnsubscribeFromEvents();
-        }
+        [Tooltip("The win panel UI.")]
+        [SerializeField]
+        private WinPanelUI _winPanel;
 
-        private void SubscribeToEvents()
-        {
-            if (_levelManager != null)
-            {
-                _levelManager.OnLevelCompleted += ShowWinPanel;
-                _levelManager.OnLevelFailed += ShowFailPanel;
-            }
-        }
+        [Tooltip("The fail panel UI.")]
+        [SerializeField]
+        private FailPanelUI _failPanel;
 
-        private void UnsubscribeFromEvents()
-        {
-            if (_levelManager != null)
-            {
-                _levelManager.OnLevelCompleted -= ShowWinPanel;
-                _levelManager.OnLevelFailed -= ShowFailPanel;
-            }
-        }
+        [Header("Freeze Screen")]
+        [Tooltip("Canvas group for the freeze screen effect.")]
+        [SerializeField]
+        private CanvasGroup _freezeScreenCanvasGroup;
 
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Shows the settings panel.
+        /// </summary>
         public void ShowSettingsPanel()
         {
             _settingsPanel.Show();
         }
 
-        private void ShowWinPanel()
+        /// <summary>
+        /// Shows the win panel.
+        /// </summary>
+        public void ShowWinPanel()
         {
             _winPanel.Show();
         }
 
-        private void ShowFailPanel()
+        /// <summary>
+        /// Shows the fail panel.
+        /// </summary>
+        public void ShowFailPanel()
         {
             _failPanel.Show();
         }
+
+        /// <summary>
+        /// Activates the freeze screen effect with fade-in and fade-out animations.
+        /// </summary>
+        /// <param name="duration">Total duration of the freeze effect.</param>
+        /// <param name="fadeInDuration">Duration of the fade-in animation.</param>
+        /// <param name="fadeOutDuration">Duration of the fade-out animation.</param>
+        public void ActivateFreezeScreen(float duration, float fadeInDuration = 1f, float fadeOutDuration = 1f)
+        {
+            if (_freezeScreenCanvasGroup == null)
+            {
+                Debug.LogWarning("Freeze screen canvas group is not assigned!");
+                return;
+            }
+
+            StartCoroutine(FreezeScreenRoutine(duration, fadeInDuration, fadeOutDuration));
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Coroutine to handle the freeze screen effect with fade-in and fade-out animations.
+        /// </summary>
+        /// <param name="duration">Total duration of the freeze effect.</param>
+        /// <param name="fadeInDuration">Duration of the fade-in animation.</param>
+        /// <param name="fadeOutDuration">Duration of the fade-out animation.</param>
+        private IEnumerator FreezeScreenRoutine(float duration, float fadeInDuration, float fadeOutDuration)
+        {
+            // Fade in
+            _freezeScreenCanvasGroup.gameObject.SetActive(true);
+            _freezeScreenCanvasGroup.alpha = 0f;
+            _freezeScreenCanvasGroup.DOFade(1f, fadeInDuration);
+
+            // Wait for the specified duration minus fade durations
+            yield return new WaitForSeconds(duration - fadeInDuration - fadeOutDuration);
+
+            // Fade out
+            _freezeScreenCanvasGroup.DOFade(0f, fadeOutDuration).OnComplete(() =>
+            {
+                _freezeScreenCanvasGroup.gameObject.SetActive(false);
+            });
+        }
+
+        #endregion
     }
 }

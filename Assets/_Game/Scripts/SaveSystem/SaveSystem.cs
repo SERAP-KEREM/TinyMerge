@@ -1,51 +1,62 @@
 using UnityEngine;
 
-/// <summary>
-/// SaveSystem provides methods for saving and loading game data via JSON serialization.
-/// It abstracts persistence logic away from the rest of the game to adhere to SOLID principles.
-/// </summary>
-public static class SaveSystem
+namespace _Main._SaveSystem
 {
-    private const string SaveKey = "SaveData";
-
     /// <summary>
-    /// Saves the provided game data into PlayerPrefs as a JSON string.
+    /// SaveSystem provides methods for saving and loading game data via JSON serialization.
+    /// It abstracts persistence logic away from the rest of the game to adhere to SOLID principles.
     /// </summary>
-    /// <param name="gameData">An instance of SaveData containing the data to be saved.</param>
-    public static void SaveGame(SaveData gameData)
+    public static class SaveSystem
     {
-        // Convert the save data to a JSON string
-        string jsonData = JsonUtility.ToJson(gameData);
+        #region Constants
 
-        // Store the JSON string in PlayerPrefs
-        PlayerPrefs.SetString(SaveKey, jsonData);
+        private const string SaveKey = "SaveData";
 
-        // Optionally save the PlayerPrefs immediately
-        PlayerPrefs.Save();
+        #endregion
 
-        Debug.Log("Save data saved successfully.");
-    }
+        #region Public Methods
 
-    /// <summary>
-    /// Loads the game data from PlayerPrefs.
-    /// If no data exists, it returns a default instance of SaveData.
-    /// </summary>
-    /// <returns>An instance of SaveData representing the loaded data.</returns>
-    public static SaveData LoadGame()
-    {
-        if (!PlayerPrefs.HasKey(SaveKey))
+        /// <summary>
+        /// Saves the provided game data into PlayerPrefs as a JSON string.
+        /// </summary>
+        /// <param name="gameData">An instance of SaveData containing the data to be saved.</param>
+        public static void SaveGame(SaveData gameData)
         {
-            Debug.LogWarning("No save data found. Returning default SaveData.");
-            return new SaveData(); // Return default data if no save exists
+            // Convert the save data to a JSON string
+            string jsonData = JsonUtility.ToJson(gameData);
+
+            // Store the JSON string in PlayerPrefs
+            PlayerPrefs.SetString(SaveKey, jsonData);
+
+            // Optionally save the PlayerPrefs immediately
+            PlayerPrefs.Save();
+
+            Debug.Log("Save data saved successfully.");
         }
 
-        // Retrieve the JSON string from PlayerPrefs
-        string jsonData = PlayerPrefs.GetString(SaveKey);
+        /// <summary>
+        /// Loads the game data from PlayerPrefs.
+        /// If no data exists, it returns a default instance of SaveData.
+        /// </summary>
+        /// <returns>An instance of SaveData representing the loaded data.</returns>
+        public static SaveData LoadGame()
+        {
+            if (!PlayerPrefs.HasKey(SaveKey))
+            {
+                Debug.LogWarning("No save data found. Returning default SaveData.");
+                return new SaveData(); // Return default data if no save exists
+            }
 
-        // Convert the JSON string back to a SaveData object
-        SaveData saveData = JsonUtility.FromJson<SaveData>(jsonData);
+            // Retrieve the JSON string from PlayerPrefs
+            string jsonData = PlayerPrefs.GetString(SaveKey);
 
-        Debug.Log("Game data loaded successfully.");
-        return saveData;
+            // Convert the JSON string back to a SaveData object
+            SaveData saveData = JsonUtility.FromJson<SaveData>(jsonData);
+
+            Debug.Log("Game data loaded successfully.");
+            return saveData;
+        }
+
+        #endregion
     }
 }

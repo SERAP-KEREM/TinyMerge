@@ -1,17 +1,20 @@
 using DG.Tweening;
 using UnityEngine;
-using SerapKeremGameTools.Game._Interfaces;
-using _Game.Scripts.Tiles;
-using _Game.Scripts._helpers;
 using Zenject;
+using _Main._Tiles;
+using _Main._Management;
+using System;
+using _Main._Interfaces;
 
-namespace _Game.Scripts.Items
+namespace _Main._Items
 {
     /// <summary>
     /// Represents an item in the game. This class encapsulates the item's properties and behaviors.
     /// </summary>
     public class Item : MonoBehaviour, ISelectable, ICollectable
     {
+        #region Serialized Fields
+
         [Header("Item Properties")]
         [Tooltip("Unique identifier for the item.")]
         [SerializeField]
@@ -60,6 +63,7 @@ namespace _Game.Scripts.Items
         [Tooltip("Material when the item is selected.")]
         [SerializeField]
         private Material _itemSelectedMaterial;
+
         [Tooltip("Material when the item is not selected.")]
         [SerializeField]
         private Material _itemDefaultMaterial;
@@ -78,11 +82,20 @@ namespace _Game.Scripts.Items
         [SerializeField]
         private Renderer _renderer;
 
+        #endregion
+
+        #region Private Fields
+
         private Rigidbody _rigidbody;
         private bool _isCollectable = true;
 
-
         private ParticleManager _particleManager;
+        private AudioManager _audioManager;
+
+        #endregion
+
+        #region Properties
+
         /// <summary>
         /// Gets or sets the unique identifier for the item.
         /// </summary>
@@ -99,11 +112,6 @@ namespace _Game.Scripts.Items
         {
             get => _itemIcon;
             set => _itemIcon = value;
-        }
-        [Inject]
-        public void Construct(ParticleManager particleManager)
-        {
-            _particleManager = particleManager;
         }
 
         /// <summary>
@@ -125,15 +133,46 @@ namespace _Game.Scripts.Items
         /// </summary>
         public bool IsCollectable => _isCollectable;
 
+        #endregion
+
+        #region Lifecycle Methods
+
+        /// <summary>
+        /// Initializes the item's components and default state.
+        /// </summary>
         private void Awake()
         {
             _rigidbody = GetComponentInChildren<Rigidbody>();
             _renderer = GetComponentInChildren<Renderer>();
-          
-            _itemDefaultMaterial = _renderer.material;
 
+            if (_renderer == null)
+            {
+                Debug.LogError("Renderer component is missing on the item.", this);
+            }
+
+            _itemDefaultMaterial = _renderer?.material;
             ResetItemScale();
         }
+
+        #endregion
+
+        #region Dependency Injection
+
+        /// <summary>
+        /// Injects dependencies required for the item.
+        /// </summary>
+        /// <param name="particleManager">The particle manager instance.</param>
+        /// <param name="audioManager">The audio manager instance.</param>
+        [Inject]
+        public void Construct(ParticleManager particleManager, AudioManager audioManager)
+        {
+            _particleManager = particleManager ?? throw new ArgumentNullException(nameof(particleManager));
+            _audioManager = audioManager ?? throw new ArgumentNullException(nameof(audioManager));
+        }
+
+        #endregion
+
+        #region Selection and Collection Logic
 
         /// <summary>
         /// Handles the selection of the item and applies a scale animation.
@@ -151,11 +190,6 @@ namespace _Game.Scripts.Items
         {
             ChangeRendererMaterial(_itemDefaultMaterial);
             ApplyScaleAnimation(_itemNormalScaleMultiplier);
-        }
-
-        private void ChangeRendererMaterial(Material material)
-        {
-            _renderer.material = material;
         }
 
         /// <summary>
@@ -184,6 +218,22 @@ namespace _Game.Scripts.Items
             });
         }
 
+        #endregion
+
+        #region Helper Methods
+
+        /// <summary>
+        /// Changes the material of the item's renderer.
+        /// </summary>
+        /// <param name="material">The material to apply.</param>
+        private void ChangeRendererMaterial(Material material)
+        {
+            if (_renderer != null)
+            {
+                _renderer.material = material;
+            }
+        }
+
         /// <summary>
         /// Resets the scale of the item to its normal state.
         /// </summary>
@@ -197,12 +247,11 @@ namespace _Game.Scripts.Items
         /// </summary>
         private void UpdateItemPosition()
         {
-            Vector3 itemPosition = _itemTile ? _itemTile.transform.position + _itemPositionOffset :
-                Vector3.zero;
-            Vector3 itemRotation = _itemCollectRotation;
+            if (_itemTile == null) return;
 
+            Vector3 itemPosition = _itemTile.transform.position + _itemPositionOffset;
             transform.DOMove(itemPosition, _itemMoveDuration);
-            transform.DORotate(itemRotation, _itemMoveDuration);
+            transform.DORotate(_itemCollectRotation, _itemMoveDuration);
         }
 
         /// <summary>
@@ -210,11 +259,10 @@ namespace _Game.Scripts.Items
         /// </summary>
         private void PlayCollectionEffects()
         {
-            if (IsCollectable && _particleManager != null)
-            {
-               _particleManager.PlayParticleAtPoint(_itemCollectParticleKey, transform.position);
-              //  GlobalBinder.singleton.AudioManager.PlaySound(_itemCollectClipKey);
-            }
+            if (!IsCollectable || _particleManager == null || _audioManager == null) return;
+
+            _particleManager.PlayParticleAtPoint(_itemCollectParticleKey, transform.position);
+            _audioManager.PlaySound(_itemCollectClipKey);
         }
 
         /// <summary>
@@ -226,5 +274,7 @@ namespace _Game.Scripts.Items
         {
             transform.DOScale(Vector3.one * scaleMultiplier, _itemScaleChangeDuration).OnComplete(onComplete);
         }
+
+        #endregion
     }
 }

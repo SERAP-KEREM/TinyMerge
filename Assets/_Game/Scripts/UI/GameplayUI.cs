@@ -3,36 +3,57 @@ using UnityEngine.UI;
 using TMPro;
 using Zenject;
 using DG.Tweening;
-using _Game.Scripts.Services;
-using _Game.Scripts.Data;
-using _Game.Scripts.Management;
+using _Main._Management;
+using _Main._Data;
 
-namespace _Game.Scripts.UI
+namespace _Main._UI
 {
+    /// <summary>
+    /// Manages the gameplay UI, including level information, timer display, and critical time effects.
+    /// </summary>
     public class GameplayUI : MonoBehaviour
     {
-        [Header("Info Texts")]
-        [SerializeField] private TextMeshProUGUI _levelText;
-        [SerializeField] private TextMeshProUGUI _timerText;
+        #region Serialized Fields
 
-        [Header("Special Skill Buttons")]
-        [SerializeField] private Button _itemShakerButton;
-        [SerializeField] private Button _destroyTripleItemButton;
-        [SerializeField] private Button _recycleItemButton;
-        [SerializeField] private Button _freezeItemButton;
+        [Header("Info Texts")]
+        [Tooltip("Text displaying the current level.")]
+        [SerializeField]
+        private TextMeshProUGUI _levelText;
+
+        [Tooltip("Text displaying the remaining time.")]
+        [SerializeField]
+        private TextMeshProUGUI _timerText;
 
         [Header("Settings")]
-        [SerializeField] private Button _settingsButton;
+        [Tooltip("Button to open the settings panel.")]
+        [SerializeField]
+        private Button _settingsButton;
 
         [Header("Timer Effects")]
-        [SerializeField] private Color _criticalTimeColor = Color.red;
-        [SerializeField] private float _criticalTimeThreshold = 10f;
+        [Tooltip("Color applied to the timer text when time is critical.")]
+        [SerializeField]
+        private Color _criticalTimeColor = Color.red;
+
+        [Tooltip("Threshold (in seconds) for applying critical time effects.")]
+        [SerializeField]
+        private float _criticalTimeThreshold = 10f;
+
+        #endregion
+
+        #region Private Fields
 
         private ITimeManager _timeManager;
         private LevelManager _levelManager;
         private GameData _gameData;
         private UIManager _uiManager;
 
+        #endregion
+
+        #region Dependency Injection
+
+        /// <summary>
+        /// Injects dependencies required for the GameplayUI.
+        /// </summary>
         [Inject]
         private void Construct(
             ITimeManager timeManager,
@@ -46,6 +67,10 @@ namespace _Game.Scripts.UI
             _uiManager = uiManager;
         }
 
+        #endregion
+
+        #region Lifecycle Methods
+
         private void Start()
         {
             InitializeUI();
@@ -57,27 +82,56 @@ namespace _Game.Scripts.UI
             UnsubscribeFromEvents();
         }
 
+        #endregion
+
+        #region Initialization
+
+        /// <summary>
+        /// Initializes the UI elements and sets up button listeners.
+        /// </summary>
         private void InitializeUI()
         {
             UpdateLevelText();
             SetupButtons();
         }
 
+        /// <summary>
+        /// Updates the level text to reflect the current level index.
+        /// </summary>
         private void UpdateLevelText()
         {
             _levelText.text = $"LEVEL {_gameData.CurrentLevelIndex + 1}";
         }
 
+        /// <summary>
+        /// Sets up button listeners for UI interactions.
+        /// </summary>
         private void SetupButtons()
         {
-            _settingsButton.onClick.AddListener(() => _uiManager.ShowSettingsPanel());
+            if (_settingsButton != null)
+            {
+                _settingsButton.onClick.AddListener(() => _uiManager.ShowSettingsPanel());
+            }
         }
 
+        #endregion
+
+        #region Event Handling
+
+        /// <summary>
+        /// Subscribes to timer update events.
+        /// </summary>
         private void SubscribeToEvents()
         {
-            _timeManager.OnTimerUpdated += UpdateTimerDisplay;
+            if (_timeManager != null)
+            {
+                _timeManager.OnTimerUpdated += UpdateTimerDisplay;
+            }
         }
 
+        /// <summary>
+        /// Unsubscribes from timer update events to prevent memory leaks.
+        /// </summary>
         private void UnsubscribeFromEvents()
         {
             if (_timeManager != null)
@@ -86,10 +140,20 @@ namespace _Game.Scripts.UI
             }
         }
 
+        #endregion
+
+        #region Timer Display
+
+        /// <summary>
+        /// Updates the timer display with the remaining time.
+        /// Applies critical time effects if the remaining time is below the threshold.
+        /// </summary>
+        /// <param name="currentTime">The remaining time in seconds.</param>
         private void UpdateTimerDisplay(float currentTime)
         {
             int minutes = Mathf.FloorToInt(currentTime / 60);
             int seconds = Mathf.FloorToInt(currentTime % 60);
+
             _timerText.text = $"{minutes:D2}:{seconds:D2}";
 
             if (currentTime <= _criticalTimeThreshold)
@@ -98,10 +162,15 @@ namespace _Game.Scripts.UI
             }
         }
 
+        /// <summary>
+        /// Applies visual effects to the timer text when time is critical.
+        /// </summary>
         private void ApplyCriticalTimeEffect()
         {
             _timerText.color = _criticalTimeColor;
             _timerText.transform.DOScale(Vector3.one * 1.2f, 0.2f).SetLoops(2, LoopType.Yoyo);
         }
+
+        #endregion
     }
 }
