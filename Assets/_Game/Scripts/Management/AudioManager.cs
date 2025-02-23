@@ -32,7 +32,7 @@ namespace _Main._Management
 
         [Header("Audio Mixer")]
         [PropertyTooltip("Audio mixer group for sound effects.")]
-        [SerializeField, Required]
+        [SerializeField]
         private AudioMixerGroup _soundMixerGroup;
 
         #endregion
