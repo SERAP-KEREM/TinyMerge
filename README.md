@@ -35,9 +35,6 @@ https://github.com/user-attachments/assets/411ce123-b773-4c6e-a620-70b7ef2366a0
 - **🔲 Tile System:**  
   Objects are placed on empty tiles. If all tiles are filled, the game is over. 🚫
 
-- **💥 Particle & Sound Effects:**  
-  Visual and sound effects trigger during matches, joker use, and other important actions. 🎶✨
-
 - **🎲 Special Joker Powers:**  
   - **Destroy Triple Item** – Removes three identical items from the board. 💣  
   - **Item Shaker** – Applies random forces to the items on the board to potentially create new matches. 🌀  
