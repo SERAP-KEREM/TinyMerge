@@ -15,21 +15,18 @@ MonoBehaviour:
   InitialTime: 180
   CriticalTimeThreshold: 10
   ItemDataList:
-  - ItemPrefab: {fileID: 1761440861945892594, guid: df832c6b4f780fa4aa654518aef601ee, type: 3}
+  - ItemPrefab: {fileID: 4000601439817395079, guid: d1d3395bea7998c4687f09c714baf007, type: 3}
     ItemCount: 15
     IsRequired: 1
-  - ItemPrefab: {fileID: 8850732633086397747, guid: 72748553580120b4a8fb1bd12705c748, type: 3}
+  - ItemPrefab: {fileID: 766321401212667355, guid: 014aebb58bfa0814e9ab9fdcea569ae0, type: 3}
     ItemCount: 12
     IsRequired: 1
   - ItemPrefab: {fileID: 5585669681191286191, guid: 2a282830d83d5634eb198d22e7bb1056, type: 3}
     ItemCount: 6
     IsRequired: 1
-  - ItemPrefab: {fileID: 7644524898905223981, guid: d2ce9aceddb19c24db42368e65d51b4d, type: 3}
-    ItemCount: 9
-    IsRequired: 1
-  - ItemPrefab: {fileID: 3148974517269910877, guid: 7e7ca5caeaba4a24e8d9b2c4ff3c4c9f, type: 3}
+  - ItemPrefab: {fileID: 4731617784502920702, guid: 20bec0ca027655c48a3dafe3d29f2e0e, type: 3}
     ItemCount: 6
     IsRequired: 1
-  - ItemPrefab: {fileID: 4142406170501248743, guid: 339f5873a9904c84e9ba0a9e347a8e76, type: 3}
-    ItemCount: 5
+  - ItemPrefab: {fileID: 1864794362063838991, guid: ef9a485007243604597f5b14220c9b4c, type: 3}
+    ItemCount: 12
     IsRequired: 0
