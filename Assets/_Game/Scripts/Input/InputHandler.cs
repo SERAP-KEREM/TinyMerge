@@ -13,8 +13,7 @@ namespace _Main._InputSystem
         #region Serialized Fields
 
         [Header("Input Settings")]
-        [Required, PropertyTooltip("Scriptable object for handling player input.")]
-        [SerializeField]
+        [PropertyTooltip("Scriptable object for handling player input.")]
         private PlayerInput _playerInput;
 
         #endregion
